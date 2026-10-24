@@ -1,286 +1,2448 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171c21"><title>NClub | Experiencia VIP inmersiva</title><style>
-:root{color-scheme:dark;--bg:#101820;--panel:rgba(17,25,32,.90);--line:#bd9562;--cream:#f7ebd7;--muted:#b8b8b4}*{box-sizing:border-box}body{margin:0;background:#141c25;color:var(--cream);font:15px/1.45 system-ui,'Segoe UI',Arial,sans-serif;overflow:hidden}#scene{position:fixed;inset:0}#scene canvas{display:block}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #e9c58a;outline-offset:2px}.top{position:fixed;top:16px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}.brand{padding:12px 16px;background:rgba(12,23,28,.8);border:1px solid #c7a77a55;border-radius:13px;backdrop-filter:blur(14px)}.brand strong{font:600 26px Georgia,serif;letter-spacing:3px}.brand small{display:block;color:#cbbca6;font-size:11px;letter-spacing:1.5px}.badge{font-size:12px;color:#f2dfbd;background:rgba(12,23,28,.82);padding:11px 14px;border:1px solid #d1b48266;border-radius:10px}.badgeRow{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;pointer-events:auto}.langbox{background:rgba(12,23,28,.82);padding:10px 12px;border:1px solid #d1b48266;border-radius:10px}.langbox label{display:block;font-size:11px;color:#e8d6bc;margin-bottom:4px;letter-spacing:.8px}.langbox select{background:#223137;color:#f6ebd6;border:1px solid #b8996b;border-radius:8px;padding:6px 8px}.hud{position:fixed;left:18px;bottom:20px;max-width:360px;display:grid;gap:10px}.panel{background:var(--panel);border:1px solid #c4a57455;border-radius:15px;backdrop-filter:blur(15px);box-shadow:0 12px 40px #0006;padding:14px}.panel h2{font-size:15px;margin:0 0 5px}.muted{color:var(--muted);font-size:12px}.controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}button{border:1px solid #bd9e7355;border-radius:9px;background:#29343a;color:#faeedc;padding:9px 11px;min-height:40px}button:hover{background:#3d493f}button.primary{background:#b28b54;color:#172027;border-color:#eccb93;font-weight:700}button.selected{background:#765b39}#assistant{position:fixed;right:18px;bottom:20px;width:min(365px,calc(100vw - 36px));max-height:77vh;overflow-y:auto}#assistant.hidden{display:none}.head{display:flex;justify-content:space-between;gap:8px;align-items:center}.head h2{font:500 21px Georgia,serif;margin:0}.chat{margin:12px 0;padding:11px;background:#253239;border-left:3px solid #dfba80;border-radius:6px;min-height:60px}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.actions button{text-align:left;font-size:12px;min-height:43px}.order{display:flex;justify-content:space-between;align-items:center;margin:8px 0;color:#f5dfbe}.order button{min-height:31px;padding:4px 10px}#orderBox{border-top:1px solid #bba07550;margin-top:12px;padding-top:8px}#note{position:fixed;top:105px;left:50%;transform:translateX(-50%);max-width:90vw;text-align:center;background:rgba(14,24,28,.87);padding:11px 18px;border:1px solid #a98955;border-radius:10px;pointer-events:none;transition:opacity .3s}#crosshair{position:fixed;top:50%;left:50%;width:8px;height:8px;border:1px solid #f8e0b8;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:.7}#mobile{position:fixed;right:16px;bottom:20px;display:none;grid-template-columns:repeat(3,46px);gap:5px}#mobile button{background:#17252dcc;touch-action:none;height:46px;padding:0}#mobile .blank{visibility:hidden}#vrHelp{position:fixed;right:18px;top:76px;max-width:240px;text-align:right;color:#ead9c3;font-size:12px;text-shadow:0 2px 5px #000}#quick{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px}#quick button{background:#182831dd}@media(max-width:800px){.hud{max-width:calc(100% - 35px);bottom:83px}.brand{padding:9px 11px}.brand strong{font-size:21px}.badge{font-size:10px}#assistant{bottom:82px;max-height:62vh}.panel{padding:11px}#mobile{display:grid}#quick{bottom:17px;left:16px;transform:none}#quick button{font-size:11px}#vrHelp{display:none}}@media(max-width:470px){.hud{width:calc(100% - 36px)}.hud .muted.hint{display:none}#quick{bottom:17px;left:10px}#quick button{padding:7px}}
-</style></head><body><div id="scene"></div><div class="top"><div class="brand"><strong>NCLUB</strong><small>COUNTRY · SOCIAL · VIP</small></div><div class="badgeRow"><div class="badge" id="location">ENTRADA PRINCIPAL · 18:20</div><div class="langbox"><label for="langSelect" id="langLabel">IDIOMA / LANGUAGE</label><select id="langSelect"><option value="es">Español</option><option value="en">English</option><option value="zh">中文</option></select></div></div></div><div id="note" role="status" aria-live="polite">Bienvenido a NClub. El robot te espera en recepción: elige una opción antes de recorrer el club.</div><div id="crosshair"></div><div class="hud"><div class="panel"><h2 id="stage">Recepción · Elige tu experiencia</h2><div class="muted" id="task">Habla con el AGIBOT de recepción, elige un destino y después sigue las luces cálidas.</div><div class="controls"><button class="primary" id="tour">✦ Ir al lounge VIP</button><button id="stop">Pausar</button><button id="helper">Asistente</button><button id="reset">Reiniciar</button></div><div class="muted hint" style="margin-top:9px">PC: W A S D para caminar · mouse arrastrando para mirar · botones para interactuar. En Quest: entrar en VR y apuntar a los paneles con el mando.</div></div></div><aside id="assistant" class="panel" aria-label="Asistente NClub en recepción y VIP"><div class="head"><h2>Asistente NClub</h2><button id="close">Cerrar ×</button></div><div class="muted">Recepción: consulta y selecciona tu destino antes de caminar</div><div class="chat" id="reply" aria-live="polite">Bienvenido a NClub, soy tu asistente. ¿Qué necesitas? Puedes consultar tu reserva, ver el menú o escoger una zona. Solo iniciaremos el recorrido cuando lo indiques.</div><div class="actions" id="actions"></div><div id="orderBox"><strong>Tu pedido</strong><div id="cart" class="muted" style="margin:5px 0">Aún no has seleccionado productos.</div><div class="controls"><button class="primary" id="confirm">Confirmar pedido</button><button id="clear">Vaciar</button></div></div><div class="controls"><button id="voice">🔊 Voz: activada</button></div></aside><div id="quick"><button id="zones">Zonas</button><button id="vip">VIP</button><button id="info">Ayuda</button><button id="lookBtn">Giro libre</button></div><div id="mobile"><span class="blank"></span><button data-move="forward">▲</button><span class="blank"></span><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div><div id="vrHelp">En Quest 3: selecciona «ENTER VR» y usa el mando para explorar y activar opciones.</div>
-<div id="loadError" role="alert" style="display:none;position:fixed;z-index:9999;inset:auto 12px 12px 12px;max-width:650px;margin:auto;padding:18px;border-radius:12px;background:#241a19;color:#fff0db;border:1px solid #dba46f;font:14px/1.5 system-ui;box-shadow:0 8px 24px #0008"><strong>No se pudo iniciar la vista 3D.</strong><p id="loadErrorDetails"></p><p>Abre el sitio publicado en Vercel con conexión a Internet. En el PC, ejecuta <code>python -m http.server 8000</code> y entra a <code>http://localhost:8000</code>. Verifica que <code>cdn.jsdelivr.net</code> no esté bloqueado.</p><button style="margin-top:8px" onclick="location.reload()">Reintentar</button></div><script>window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='SCRIPT')return;var box=document.getElementById('loadError');if(box){box.style.display='block';document.getElementById('loadErrorDetails').textContent=String(e.message||'Falló la carga de Three.js o WebGL.');}});window.addEventListener('unhandledrejection',function(e){var box=document.getElementById('loadError');if(box){box.style.display='block';document.getElementById('loadErrorDetails').textContent=String(e.reason||'No se pudo cargar un módulo 3D.');}});</script>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e151b">
+<title>NClub · Experiencia VIP inmersiva</title>
+<style>
+:root{color-scheme:dark;--bg:#0e151b;--panel:rgba(14,22,28,.9);--gold:#e3bf85;--line:#c9a46a;--cream:#f7ebd7;--muted:#b9b4aa}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--cream);font:15px/1.45 system-ui,"Segoe UI",Roboto,Arial,sans-serif;overflow:hidden}
+#app{position:fixed;inset:0}
+#app canvas{display:block;touch-action:none}
+button{font:inherit;cursor:pointer;border:1px solid #c9a46a66;border-radius:10px;background:#22313a;color:var(--cream);padding:10px 14px;min-height:42px}
+button:hover{background:#2f434d}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button.primary{background:linear-gradient(#d1a868,#b28b54);color:#162028;border-color:#f0d29e;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}
+#overlay{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at 50% 30%,rgba(20,32,40,.45),rgba(8,12,16,.9));z-index:20;overflow:auto}
+#overlay.hidden{display:none}
+.card{width:min(560px,100%);background:var(--panel);border:1px solid #c9a46a55;border-radius:18px;padding:24px;box-shadow:0 20px 60px #000a;backdrop-filter:blur(14px)}
+.brand strong{font:600 38px Georgia,serif;letter-spacing:6px;color:var(--gold)}
+.brand small{display:block;font-size:12px;letter-spacing:2.5px;color:#cbbca6}
+.card p{color:#e2d8c8}
+.langs{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.langs button.on{background:#765b39;border-color:var(--gold)}
+.cta{display:grid;gap:10px;margin:16px 0 8px}
+.cta button{font-size:17px;min-height:52px}
+#xrStatus{font-size:13px;color:var(--muted);min-height:20px}
+details{margin-top:10px;font-size:13px;color:#d8cfc0}
+summary{cursor:pointer;color:var(--gold)}
+details ul{padding-left:18px;margin:6px 0 4px}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+#hud.hidden{display:none}
+.hudTop{position:absolute;top:12px;left:16px;right:16px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.chip{background:rgba(12,20,26,.78);border:1px solid #c9a46a55;border-radius:12px;padding:8px 12px;backdrop-filter:blur(10px)}
+.chip strong{font:600 18px Georgia,serif;letter-spacing:3px;color:var(--gold);margin-right:8px}
+#zoneBadge{font-size:12px;letter-spacing:1px;color:#f2dfbd}
+.hudBtns{display:flex;gap:8px;pointer-events:auto}
+.hudBtns button{min-height:36px;padding:6px 12px;background:rgba(18,30,38,.85)}
+#crosshair{position:absolute;top:50%;left:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border:1.5px solid #f8e0b8;border-radius:50%;opacity:.75}
+#help{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);text-align:center;font-size:12px;color:#ead9c3;text-shadow:0 1px 4px #000;background:rgba(10,16,20,.55);padding:6px 12px;border-radius:10px}
+#joy{position:absolute;left:22px;bottom:40px;width:120px;height:120px;border-radius:50%;border:1px solid #c9a46a88;background:rgba(14,22,28,.45);pointer-events:auto;touch-action:none;display:none}
+#joy span{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:rgba(227,191,133,.6)}
+@media (pointer:coarse){#joy{display:block}#crosshair,#help{display:none}}
+#loadError{display:none;position:fixed;z-index:99;inset:auto 12px 12px 12px;max-width:650px;margin:auto;padding:18px;border-radius:12px;background:#241a19;color:#fff0db;border:1px solid #dba46f;box-shadow:0 8px 24px #0008}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="hud" class="hidden">
+  <div class="hudTop">
+    <div class="chip"><strong>NCLUB</strong><span id="zoneBadge"></span></div>
+    <div class="hudBtns"><button id="hudMenu"></button><button id="hudAssistant"></button><button id="hudVR" hidden>VR</button></div>
+  </div>
+  <div id="crosshair"></div>
+  <div id="help"></div>
+  <div id="joy"><span></span></div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="brand"><strong>NCLUB</strong><small>COUNTRY · SOCIAL · VIP</small></div>
+    <p id="ovIntro"></p>
+    <div class="langs" id="langs"><button data-lang="es">Español</button><button data-lang="en">English</button><button data-lang="zh">中文</button></div>
+    <div class="cta"><button id="btnVR" class="primary" disabled></button><button id="btnDesk"></button></div>
+    <div id="xrStatus" role="status"></div>
+    <details><summary id="ctlVRTitle"></summary><ul id="ctlVR"></ul></details>
+    <details><summary id="ctlDeskTitle"></summary><ul id="ctlDesk"></ul></details>
+  </div>
+</div>
+
+<div id="loadError" role="alert"><strong>No se pudo iniciar la vista 3D.</strong><p id="loadErrorDetails"></p><p>Abre el sitio publicado por HTTPS (GitHub Pages, Vercel o Netlify) con conexión a Internet y verifica que <code>cdn.jsdelivr.net</code> no esté bloqueado.</p><button onclick="location.reload()">Reintentar</button></div>
+
+<script>
+(function () {
+  var shown = false;
+  function fail(msg) {
+    if (window.__nclubBooted || shown) return;
+    shown = true;
+    document.getElementById('loadError').style.display = 'block';
+    document.getElementById('loadErrorDetails').textContent = msg;
+  }
+  window.__nclubFail = fail;
+  window.addEventListener('error', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'SCRIPT') { fail('No se pudo descargar una librería 3D (' + (el.src || 'módulo') + ').'); return; }
+    if (e.message) fail(e.message);
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) { fail(String((e.reason && e.reason.message) || e.reason)); });
+  setTimeout(function () { if (!window.__nclubBooted) fail('La escena tardó demasiado en cargar. Revisa tu conexión.'); }, 30000);
+})();
+</script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/",
+    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+
 <script type="module">
-import * as THREE from 'three';import {VRButton} from 'three/addons/webxr/VRButton.js';
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x586b7b);scene.fog=new THREE.FogExp2(0x586b7b,.009);
-const camera=new THREE.PerspectiveCamera(74,innerWidth/innerHeight,.07,260);camera.position.set(-22,1.68,-18);let yaw=-.18,pitch=0;camera.rotation.order='YXZ';
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType('local-floor');document.getElementById('scene').appendChild(renderer.domElement);document.body.appendChild(VRButton.createButton(renderer));
-scene.add(new THREE.HemisphereLight(0xaec5d6,0x35432d,2.15));const sunset=new THREE.DirectionalLight(0xffc78b,3.2);sunset.position.set(-55,43,15);sunset.castShadow=true;sunset.shadow.mapSize.set(2048,2048);sunset.shadow.camera.left=-75;sunset.shadow.camera.right=75;sunset.shadow.camera.top=75;sunset.shadow.camera.bottom=-75;scene.add(sunset);
-const mat=(c,r=0.85,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});const grass=mat(0x3b6042),pave=mat(0xd1c1a3),stone=mat(0xb8afa1),wood=mat(0x674c3a),cream=mat(0xf1e4cb),wall=mat(0xd6cbb9),roof=mat(0x3a3c3a),glass=new THREE.MeshPhysicalMaterial({color:0x8bb2b9,roughness:.12,metalness:.26,transparent:true,opacity:.43,side:THREE.DoubleSide}),dark=mat(0x20242a,.38,.2),gold=mat(0xd6ad6a,.3,.62),water=mat(0x438e97,.23,.22),court=mat(0x9c6249);
-const cube=(w,h,d,x,y,z,m,parent=scene)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);mesh.position.set(x,y,z);mesh.receiveShadow=true;mesh.castShadow=true;parent.add(mesh);return mesh};const sphere=(r,x,y,z,m,parent=scene)=>{const mesh=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),m);mesh.position.set(x,y,z);mesh.castShadow=true;parent.add(mesh);return mesh};const cyl=(r1,r2,h,x,y,z,m,parent=scene)=>{const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,10),m);mesh.position.set(x,y,z);mesh.castShadow=true;parent.add(mesh);return mesh};
-function label(text,x,y,z,size=1.25,col='#f6ebd6'){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const ctx=cv.getContext('2d');ctx.fillStyle='rgba(18,29,31,.86)';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#cba66d';ctx.lineWidth=5;ctx.strokeRect(5,5,502,118);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=col;ctx.font='600 42px Georgia';ctx.fillText(text,256,65,470);const t=new THREE.CanvasTexture(cv);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false}));s.position.set(x,y,z);s.scale.set(size*4,size,1);scene.add(s);return s}
-// Terrain, lake, planted avenues
-cube(260,.2,250,0,-.16,0,grass);cube(10,.06,72,-22,.02,12,pave);cube(31,.06,9,-7,.04,14,pave);cube(52,.04,6,17,.03,-2,pave);cube(29,.04,6,26,.03,25,pave);
-const lake=new THREE.Mesh(new THREE.CircleGeometry(24,44),water);lake.rotation.x=-Math.PI/2;lake.scale.set(1.45,.8,1);lake.position.set(-57,.0,13);scene.add(lake);for(let i=0;i<28;i++){let a=i*.47,r=10+i*.15;sphere(.22,-57+Math.sin(a)*r,.12,13+Math.cos(a)*r,stone)}
-function tree(x,z,s=1){cyl(.2*s,.29*s,2.6*s,x,1.3*s,z,wood);sphere(1.65*s,x,3.28*s,z,mat(0x32523a));sphere(1.25*s,x+.6*s,3.7*s,z-.4*s,mat(0x466b43))}for(let i=0;i<16;i++){tree(-31+i*3,19+(i%3)*2,.8+(i%3)*.12);tree(7+i*3,-17-(i%3)*2,.9)}for(let i=0;i<17;i++)tree(-60+i*4,47+(i%3)*3,1.15);
-function lamp(x,z){cyl(.065,.085,3.4,x,1.7,z,dark);sphere(.18,x,3.45,z,gold);const p=new THREE.PointLight(0xffca83,3.3,7);p.position.set(x,3.32,z);scene.add(p)}for(let i=0;i<10;i++){lamp(-26, -10+i*6);lamp(-18,-10+i*6)}
-function building({x,z,w,d,h=5,name,interior=false}){cube(w,.28,d,x,.14,z,stone);for(const side of [-1,1]){cube(w,.25,.35,x,h-.1,z+side*d/2,wall);cube(.35,h,d,x+side*w/2,h/2,z,wall)}cube(w+.8,.45,d+.8,x,h+.35,z,roof);for(let i=0;i<Math.floor(w/3);i++){const wx=x-w/2+1.7+i*3;cube(1.95,2.8,.09,wx,2.27,z+d/2+.12,glass);cube(.1,2.9,.17,wx,2.27,z+d/2+.2,gold)}for(let j=0;j<Math.floor(d/3);j++){const wz=z-d/2+1.7+j*3;cube(.09,2.6,1.8,x-w/2-.1,2.2,wz,glass)}if(name)label(name,x,h+1.28,z+d/2+1,Math.min(1.3,w/14));for(let i=0;i<3;i++)cube(w/4,.2,1.2,x-w/3+i*w/3,h+.7,z+d/2-.6,wood);if(interior){for(let k=0;k<4;k++){const tx=x-w/2+3+k*3.9;cube(1.5,.13,.85,tx,.83,z,wood);cyl(.08,.08,.7,tx,.45,z,dark);cube(.9,.46,.75,tx,0.48,z-1.5,mat(0x7d7e72))}}}
-building({x:-10,z:5,w:25,d:13,h:6,name:'NCLUB · RECEPCIÓN',interior:true});building({x:21,z:21,w:27,d:15,h:5.5,name:'LOUNGE VIP',interior:true});building({x:32,z:-7,w:21,d:13,h:5,name:'RESTAURANTE · BAR',interior:true});building({x:54,z:18,w:13,d:11,h:4,name:'ZONA REGULAR'});building({x:7,z:-24,w:11,d:9,h:4,name:'INFORMACIÓN'});building({x:25,z:-24,w:11,d:9,h:4,name:'BAÑOS'});
-// Reception portico and premium interior
-for(let i=0;i<5;i++){const x=-20+i*5;cyl(.27,.27,5,x,2.5,12.7,stone)}cube(27,.35,5,-10,5.3,13.5,roof);cube(8,.12,2,-10,1.02,10,wood);cube(7,.75,.8,-10,.55,10,stone);label('BIENVENIDOS A NCLUB',-10,4.1,13.5,1.35);
-// Lounge furniture, feature walls, terrace and planters
-cube(13,.14,4,18,.18,29,wood);for(let j=0;j<4;j++){const x=13+j*4;cube(2.6,.6,1,x,.5,27,mat(0xa8947b));cube(2.6,.65,.35,x,.9,27.6,mat(0xa8947b));cube(1.6,.13,1.1,x,.61,24.7,wood)}cube(10,1.1,1.2,24,.7,15.2,wood);for(let j=0;j<9;j++)cyl(.09,.09,.24,20+j,1.38,15.2,gold);label('CONCIERGE VIP',20,3.6,13.0,1);
-// Tennis courts / golf
-for(let i=0;i<4;i++){const x=15+(i%2)*15,z=52+Math.floor(i/2)*23;cube(12,.05,19,x,.08,z,court);const white=mat(0xf2e8dc);for(let side of [-1,1]){cube(.1,.03,19,x+side*5.4,.13,z,white);cube(11,.03,.09,x,.13,z+side*8.5,white)}cube(11,.04,.07,x,.14,z,white);for(let q of [-1,1])cyl(.055,.055,1.2,x+q*5.5,.65,z,dark)}label('CAMPOS DEPORTIVOS',23,2,43,1.0);for(let j=0;j<9;j++){const x=50+(j%3)*5,z=47+Math.floor(j/3)*6;cube(4,.04,3,x,.07,z,mat(j%2?0x5d824f:0x77945b));sphere(.22,x,0.3,z,gold)}label('MINIGOLF',55,2,39,1);
-// Planters and pools
-for(let i=0;i<13;i++){const x=-22+i*4;cube(1.5,.5,1.5,x,.3,23,stone);sphere(.75,x,1.2,23,mat(0x59784b))}const pool=new THREE.Mesh(new THREE.CircleGeometry(6,32),water);pool.rotation.x=-Math.PI/2;pool.position.set(0,.1,38);scene.add(pool);label('ZONA SOCIAL · JARDINES',-2,3.4,29,1.2);
-// Diseño arquitectónico: pórticos iluminados, carpinterías y jardines.
-const warmGlass=new THREE.MeshStandardMaterial({color:0xe8bf82,emissive:0xa86b31,emissiveIntensity:.35,roughness:.28,metalness:.15,transparent:true,opacity:.76,side:THREE.DoubleSide});
-for(const b of [[-10,5,25,13],[21,21,27,15],[32,-7,21,13],[54,18,13,11],[7,-24,11,9],[25,-24,11,9]]){
- const [x,z,w,d]=b;
- // galerías elevadas y marcos de ventanas simulados, sin ocupar los pasos exteriores
- for(let k=0;k<Math.floor(w/3);k++){
-   const px=x-w/2+1.55+k*3;
-   cube(1.55,2.35,.04,px,2.4,z+d/2+.19,warmGlass);
-   cube(1.7,.075,.12,px,3.66,z+d/2+.22,gold);
-   cube(1.7,.075,.12,px,1.17,z+d/2+.22,wood);
- }
- cube(w+.75,.13,.38,x,4.55,z+d/2+.3,wood);
-}
-function bench(x,z){cube(1.8,.14,.6,x,.54,z,wood);cube(1.8,.62,.13,x,.94,z-.27,wood);for(const d of [-.63,.63])cube(.1,.45,.1,x+d,.28,z,dark)}
-for(const [x,z] of [[-27,8],[-25,23],[3,26],[37,32],[40,4],[43,-11]])bench(x,z);
-const flower=mat(0xc99b78),foliage=mat(0x486f49);
-for(let i=0;i<18;i++){let x=-29+(i%6)*11,z=33+Math.floor(i/6)*6;
- if(x>-11&&x<9&&z<45)continue;
- cyl(.53,.47,.4,x,.24,z,stone);sphere(.52,x,.65,z,foliage);for(let j=0;j<3;j++)sphere(.12,x+Math.sin(j*2.1)*.36,1.02,z+Math.cos(j*2.1)*.32,flower);
-}
-// Paseo principal adoquinado exterior; el algoritmo conserva el despeje de obstáculos.
-for(const [x,z,w,d] of [[-25,1,3,28],[-12,16,29,3],[10,32,32,3],[42,31,24,3],[40,4,3,54]]){
- cube(w,.035,d,x,.035,z,pave);
-}
-// Robot look inspired by user's X2 Ultra photos: stylized, not actual meshes
-function makeRobot(x,z){const root=new THREE.Group();root.position.set(x,0,z);scene.add(root);const white=mat(0xf5f6f6,.22,.08),graphite=mat(0x1b2026,.45,.18),gray=mat(0x8e969e,.4,.12),yellow=mat(0xefbe45,.25,.25);const visorMat=new THREE.MeshStandardMaterial({color:0x0d1014,roughness:.18,metalness:.22});const eyeMat=new THREE.MeshStandardMaterial({color:0xbff8ff,emissive:0x63eaff,emissiveIntensity:1.3,roughness:.08});const coreMat=new THREE.MeshStandardMaterial({color:0x9fb2bd,emissive:0x6ad8ff,emissiveIntensity:.35,roughness:.22});const body=new THREE.Group();root.add(body);const pelvis=new THREE.Mesh(new THREE.BoxGeometry(.44,.26,.3),graphite);pelvis.position.set(0,1.02,0);pelvis.castShadow=true;body.add(pelvis);const torsoShell=new THREE.Mesh(new THREE.CapsuleGeometry(.37,.88,7,18),white);torsoShell.position.y=1.67;torsoShell.castShadow=true;body.add(torsoShell);const back=new THREE.Mesh(new THREE.BoxGeometry(.38,.58,.16),graphite);back.position.set(0,1.62,-.16);back.castShadow=true;body.add(back);const chestPanel=new THREE.Mesh(new THREE.CapsuleGeometry(.07,.18,4,10),coreMat);chestPanel.rotation.z=Math.PI/2;chestPanel.position.set(0,1.76,.31);body.add(chestPanel);const headPivot=new THREE.Group();headPivot.position.set(0,2.42,.02);body.add(headPivot);const neck=new THREE.Mesh(new THREE.CylinderGeometry(.08,.09,.08,18),gray);neck.position.y=-.12;headPivot.add(neck);const headShell=new THREE.Mesh(new THREE.SphereGeometry(.3,24,20),white);headShell.scale.set(1,.9,1.03);headShell.castShadow=true;headPivot.add(headShell);const face=new THREE.Mesh(new THREE.BoxGeometry(.37,.26,.28),visorMat);face.position.set(0,.03,.15);face.castShadow=true;headPivot.add(face);const brow=new THREE.Mesh(new THREE.BoxGeometry(.3,.03,.02),gray);brow.position.set(0,.16,.28);headPivot.add(brow);for(const sx of[-1,1]){const eye=new THREE.Mesh(new THREE.CapsuleGeometry(.026,.04,4,10),eyeMat);eye.rotation.z=Math.PI/2;eye.position.set(sx*.065,.035,.295);headPivot.add(eye)}const mouth=new THREE.Mesh(new THREE.TorusGeometry(.055,.008,8,18,Math.PI),new THREE.MeshStandardMaterial({color:0x9befff,emissive:0x62ddff,emissiveIntensity:.7}));mouth.rotation.set(Math.PI,0,0);mouth.position.set(0,-.05,.29);headPivot.add(mouth);for(const sx of[-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.11,14,14),white);shoulder.position.set(sx*.46,1.95,.01);shoulder.castShadow=true;body.add(shoulder);const upperArm=new THREE.Mesh(new THREE.CapsuleGeometry(.09,.48,5,14),white);upperArm.position.set(sx*.6,1.58,.01);upperArm.rotation.z=sx*.12;upperArm.castShadow=true;body.add(upperArm);const elbow=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.09,16),gray);elbow.rotation.z=Math.PI/2;elbow.position.set(sx*.64,1.29,.01);body.add(elbow);const foreArm=new THREE.Mesh(new THREE.CapsuleGeometry(.08,.38,5,14),white);foreArm.position.set(sx*.66,1.03,.03);foreArm.rotation.z=sx*.05;foreArm.castShadow=true;body.add(foreArm);const wrist=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.08,14),graphite);wrist.rotation.z=Math.PI/2;wrist.position.set(sx*.67,.8,.07);body.add(wrist);const palm=new THREE.Mesh(new THREE.BoxGeometry(.09,.11,.07),yellow);palm.position.set(sx*.68,.74,.1);palm.castShadow=true;body.add(palm);for(const fx of[-.02,.0,.02]){const finger=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.09,10),yellow);finger.rotation.x=Math.PI/2;finger.position.set(sx*(.69+fx),.72,.15);body.add(finger)}const hip=new THREE.Mesh(new THREE.SphereGeometry(.1,12,12),graphite);hip.position.set(sx*.16,.97,0);body.add(hip);const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.11,.53,6,14),white);thigh.position.set(sx*.16,.68,0);thigh.castShadow=true;body.add(thigh);const knee=new THREE.Mesh(new THREE.CylinderGeometry(.085,.085,.08,14),gray);knee.rotation.z=Math.PI/2;knee.position.set(sx*.16,.39,0);body.add(knee);const shin=new THREE.Mesh(new THREE.CapsuleGeometry(.1,.5,6,14),white);shin.position.set(sx*.16,.14,.01);shin.castShadow=true;body.add(shin);const ankle=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.08,14),graphite);ankle.rotation.z=Math.PI/2;ankle.position.set(sx*.16,-.09,.02);body.add(ankle);const heel=new THREE.Mesh(new THREE.BoxGeometry(.17,.07,.22),graphite);heel.position.set(sx*.16,-.14,.08);heel.castShadow=true;body.add(heel);const toe=new THREE.Mesh(new THREE.BoxGeometry(.17,.045,.14),yellow);toe.position.set(sx*.16,-.15,.22);toe.castShadow=true;body.add(toe)}const halo=new THREE.Mesh(new THREE.TorusGeometry(.4,.012,10,36),new THREE.MeshStandardMaterial({color:0xffdfa9,emissive:0xd49f46,emissiveIntensity:.45}));halo.rotation.x=Math.PI/2;halo.position.y=.02;root.add(halo);root.userData={body,head:headPivot,halo};return root}const robot1=makeRobot(-20,-11),robot2=makeRobot(19,17);robot2.rotation.y=Math.PI;
-// Walkable waypoints and luminous segmented path
-const pathPts=[[-22,-18],[-24,-7],[-23,13],[-11,18],[3,18],[10,30],[19,32]];let points=pathPts.map(p=>new THREE.Vector3(p[0],.095,p[1]));const routeGroup=new THREE.Group();scene.add(routeGroup);const routeGlow=new THREE.MeshBasicMaterial({color:0xffb958,transparent:true,opacity:.42,depthWrite:false});const routeCore=new THREE.MeshBasicMaterial({color:0xffe4a3,transparent:true,opacity:.97,depthWrite:false});let dashes=[];
-function drawRoute(){while(routeGroup.children.length){const child=routeGroup.children[0];routeGroup.remove(child);child.geometry.dispose()}dashes=[];
- for(let k=0;k<points.length-1;k++){let a=points[k],b=points[k+1],dist=a.distanceTo(b),count=Math.ceil(dist/1.5);for(let j=0;j<count;j++){let t=(j+.45)/count,pos=a.clone().lerp(b,t);const ang=Math.atan2(b.x-a.x,b.z-a.z);for(let [w,h,m] of [[.52,.025,routeGlow],[.19,.038,routeCore]]){const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,.65),m);obj.position.copy(pos);obj.rotation.y=ang;routeGroup.add(obj);dashes.push({mesh:obj,index:k*20+j})}}}}
-drawRoute();routeGroup.visible=false;
-const arrival=new THREE.Mesh(new THREE.TorusGeometry(1.25,.065,8,48),new THREE.MeshBasicMaterial({color:0xffd69a}));arrival.rotation.x=-Math.PI/2;arrival.position.set(19,.11,32);scene.add(arrival);
-// Mini task/world UI
-let stage=0,autopilot=false,pathIndex=0,progress=0,voiceOn=true,cart={},tourStarted=false,currentDestination="Lounge VIP",destinationIsVip=true,drag=false,lastX=0,lastY=0;const $=id=>document.getElementById(id);let lastSpeech='',lang='es';const I18N={es:{langLabel:'IDIOMA / LANGUAGE',brand:'COUNTRY · SOCIAL · VIP',welcome:'Bienvenido a NClub. El robot te espera en recepción: elige una opción antes de recorrer el club.',assistantIntro:'Bienvenido a NClub, soy tu asistente. ¿Qué necesitas? Puedes consultar tu reserva, ver el menú o escoger una zona. Solo iniciaremos el recorrido cuando lo indiques.',assistantShort:'Bienvenido, soy tu asistente. ¿Qué necesitas?',stage:['Recepción · Decide con AGIBOT','Camino iluminado · NClub','Zona social · Jardines','Lounge VIP · Segundo AGIBOT'],task:['El robot está a tu lado. Explora las opciones antes de iniciar la ruta.','Camina o sigue la guía ámbar con un paso más natural.','Disfruta el paisaje mientras sigues el recorrido.','El segundo robot te recibe para continuar la atención.'],tour:'✦ Ir al lounge VIP',stop:'Pausar',helper:'Asistente',reset:'Reiniciar',voiceOn:'🔊 Voz: activada',voiceOff:'🔇 Voz: desactivada',zones:'Zonas',vip:'VIP',info:'Ayuda',orderTitle:'Tu pedido',emptyCart:'Aún no has seleccionado productos.',confirm:'Confirmar pedido',clear:'Vaciar',receptionMeta:'Recepción: consulta y selecciona tu destino antes de caminar',assistantTitle:'Asistente NClub',close:'Cerrar ×',reserve:'📋 Consultar reserva',menu:'🍽️ Ver menú VIP',drink:'🍹 Pedir bebida',snack:'🥪 Pedir snack',seeZones:'🗺️ Ver zonas del club',restaurant:'🍴 Ir al restaurante',bathroom:'🚻 Ir a baños',call:'🔔 Llamar asistencia',help:'❔ Necesito ayuda',back:'↩ Volver',arrivedVip:'Llegaste al lounge VIP. Soy el segundo asistente NClub. ¿Deseas consultar tu reserva, ver el menú o realizar un pedido?',paused:'Recorrido pausado. Puedes explorar libremente.',resetMsg:'Estás en recepción. Selecciona una opción y después un destino.',reservationMsg:'Reserva VIP de demostración confirmada a nombre de Valentina Pérez, para dos personas a las siete de la noche, mesa número cuatro.',menuMsg:'Nuestro menú de demostración ofrece mocktail de frutos rojos, limonada, café especial, bruschettas y tabla de quesos.',assistanceMsg:'He generado una solicitud ficticia de asistencia. Un colaborador del club te atendería en este punto.',helpMsg:'Soy tu asistente NClub. Puedo revisar una reserva ficticia, mostrar el menú, agregar varios productos a un pedido o indicarte otras zonas del club.',addMsg:n=>`Agregué ${n} a tu pedido. ¿Deseas algo más?`,emptyOrderMsg:'Agrega una bebida o un snack antes de confirmar.',clearMsg:'He vaciado el pedido de demostración.',confirmMsg:n=>`Pedido simulado registrado correctamente con ${n} productos. Gracias por visitar NClub.`,routeSafe:n=>`Camino seguro hacia ${n}: sigue las luces cálidas por los senderos.`,noPath:'No hay un camino seguro desde aquí. Vuelve a la entrada o elige otro destino.',arrivedOther:n=>`Has llegado a ${n}. Puedes elegir otra zona o pedir ayuda.`,hint:'PC: W A S D para caminar · haz clic en la escena para giro libre o arrastra con el mousepad · botones para interactuar. En Quest: entrar en VR y apuntar a los paneles con el mando.',look:'Giro libre',lookOn:'🎯 Giro libre: activado',lookOff:'🖱️ Giro libre: desactivado',lookHelp:'Haz clic sobre la escena para activar el giro libre. Presiona Esc para soltar el cursor.'},en:{langLabel:'LANGUAGE / IDIOMA',brand:'COUNTRY · SOCIAL · VIP',welcome:'Welcome to NClub. The robot is waiting for you at reception: choose an option before exploring the club.',assistantIntro:'Welcome to NClub, I am your assistant. What do you need? You can check your booking, view the menu or choose an area. We will only start the route when you request it.',assistantShort:'Welcome, I am your assistant. What do you need?',stage:['Reception · Decide with AGIBOT','Lit pathway · NClub','Social zone · Gardens','VIP Lounge · Second AGIBOT'],task:['The robot is beside you. Explore the options before starting the route.','Walk or follow the amber guide with a more natural step.','Enjoy the landscape while following the route.','The second robot welcomes you to continue the service.'],tour:'✦ Go to VIP lounge',stop:'Pause',helper:'Assistant',reset:'Reset',voiceOn:'🔊 Voice: on',voiceOff:'🔇 Voice: off',zones:'Areas',vip:'VIP',info:'Help',orderTitle:'Your order',emptyCart:'You have not selected products yet.',confirm:'Confirm order',clear:'Clear',receptionMeta:'Reception: ask and choose your destination before walking',assistantTitle:'NClub Assistant',close:'Close ×',reserve:'📋 Check booking',menu:'🍽️ View VIP menu',drink:'🍹 Order drink',snack:'🥪 Order snack',seeZones:'🗺️ View club areas',restaurant:'🍴 Go to restaurant',bathroom:'🚻 Go to restrooms',call:'🔔 Call assistance',help:'❔ I need help',back:'↩ Back',arrivedVip:'You arrived at the VIP lounge. I am the second NClub assistant. Would you like to check your booking, view the menu or place an order?',paused:'Route paused. You can explore freely.',resetMsg:'You are at reception. Choose an option and then a destination.',reservationMsg:'Demo VIP booking confirmed for Valentina Pérez, party of two at seven p.m., table number four.',menuMsg:'Our demo menu offers berry mocktail, lemonade, special coffee, bruschettas and a cheese board.',assistanceMsg:'I have created a fictional assistance request. A club staff member would help you at this point.',helpMsg:'I am your NClub assistant. I can review a fictional booking, show the menu, add several products to an order or guide you to other club areas.',addMsg:n=>`I added ${n} to your order. Would you like anything else?`,emptyOrderMsg:'Add a drink or snack before confirming.',clearMsg:'I have cleared the demo order.',confirmMsg:n=>`Demo order successfully recorded with ${n} items. Thank you for visiting NClub.`,routeSafe:n=>`Safe path to ${n}: follow the warm lights along the walkways.`,noPath:'There is no safe route from here. Return to reception or choose another destination.',arrivedOther:n=>`You have arrived at ${n}. You can choose another area or ask for help.`,hint:'PC: use W A S D to walk · click the scene for free look or drag on the trackpad · buttons to interact. In Quest: enter VR and point at the panels with the controller.',look:'Free look',lookOn:'🎯 Free look: enabled',lookOff:'🖱️ Free look: disabled',lookHelp:'Click the scene to enable free look. Press Esc to release the cursor.'},zh:{langLabel:'语言 / LANGUAGE',brand:'乡村 · 社交 · 贵宾',welcome:'欢迎来到 NClub。机器人正在前台等你：在开始参观之前，请先选择一个选项。',assistantIntro:'欢迎来到 NClub，我是你的助手。你需要什么帮助？你可以查询预订、查看菜单或选择区域。只有在你确认后，我们才会开始路线。',assistantShort:'欢迎，我是你的助手。你需要什么帮助？',stage:['前台 · 与 AGIBOT 决定路线','发光路线 · NClub','社交区域 · 花园','VIP 贵宾厅 · 第二台 AGIBOT'],task:['机器人就在你身边。出发前先查看选项。','步行或沿着暖色灯光前进，体验更自然的步态。','沿着路线前进，同时欣赏周围景观。','第二台机器人会继续为你服务。'],tour:'✦ 前往 VIP 贵宾厅',stop:'暂停',helper:'助手',reset:'重置',voiceOn:'🔊 语音：开启',voiceOff:'🔇 语音：关闭',zones:'区域',vip:'VIP',info:'帮助',orderTitle:'你的订单',emptyCart:'你还没有选择任何商品。',confirm:'确认订单',clear:'清空',receptionMeta:'前台：出发前先咨询并选择目的地',assistantTitle:'NClub 助手',close:'关闭 ×',reserve:'📋 查询预订',menu:'🍽️ 查看 VIP 菜单',drink:'🍹 点饮品',snack:'🥪 点小吃',seeZones:'🗺️ 查看俱乐部分区',restaurant:'🍴 去餐厅',bathroom:'🚻 去洗手间',call:'🔔 呼叫协助',help:'❔ 我需要帮助',back:'↩ 返回',arrivedVip:'你已到达 VIP 贵宾厅。我是第二位 NClub 助手。你想查询预订、查看菜单还是下单？',paused:'路线已暂停。你可以自由探索。',resetMsg:'你现在在前台。请先选择一个选项，然后再选择目的地。',reservationMsg:'演示 VIP 预订已确认：Valentina Pérez，两位客人，晚上七点，四号桌。',menuMsg:'演示菜单包含莓果无酒精鸡尾酒、柠檬水、精品咖啡、意式烤面包和奶酪拼盘。',assistanceMsg:'我已经生成了一个模拟协助请求。俱乐部工作人员会在这里为你提供帮助。',helpMsg:'我是你的 NClub 助手。我可以查询模拟预订、展示菜单、添加多种商品到订单中，或者带你前往俱乐部的其他区域。',addMsg:n=>`我已将 ${n} 添加到你的订单。还需要别的吗？`,emptyOrderMsg:'请先添加饮品或小吃再确认。',clearMsg:'我已清空模拟订单。',confirmMsg:n=>`模拟订单已成功记录，共 ${n} 件商品。感谢你来到 NClub。`,routeSafe:n=>`前往 ${n} 的安全路线已生成：请沿着暖色灯光前进。`,noPath:'从这里没有安全路线。请回到前台或选择其他目的地。',arrivedOther:n=>`你已到达 ${n}。你可以继续选择其他区域或请求帮助。`,hint:'电脑端：W A S D 行走 · 点击场景启用自由视角，或在触控板上拖动观察 · 使用按钮交互。Quest 端：进入 VR 并使用手柄指向面板。',look:'自由视角',lookOn:'🎯 自由视角：已开启',lookOff:'🖱️ 自由视角：已关闭',lookHelp:'点击场景即可启用自由视角。按 Esc 释放鼠标。'}};function L(){return I18N[lang]}function speak(msg){lastSpeech=msg;$('reply').textContent=msg;notify(msg);if(typeof writeVRMessage==='function')writeVRMessage(msg);if(voiceOn&&'speechSynthesis'in window){speechSynthesis.cancel();const s=new SpeechSynthesisUtterance(msg);s.lang=lang==='es'?'es-CO':lang==='en'?'en-US':'zh-CN';s.rate=lang==='zh'?.96:.94;s.pitch=1.02;speechSynthesis.speak(s)}}function notify(msg){$('note').textContent=msg;$('note').style.opacity='1';clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('note').style.opacity='.3',6500)}function updateStage(i,announce=true){stage=i;const text=L().stage;$('stage').textContent=text[i];$('task').textContent=L().task[i];$('location').textContent=text[i].toUpperCase()+' · 18:20';if(i===3&&announce){$('assistant').classList.remove('hidden');speak(L().arrivedVip)}}function refreshLanguage(){document.documentElement.lang=lang;$('langLabel').textContent=L().langLabel;document.querySelector('.brand small').textContent=L().brand;$('tour').textContent=L().tour;$('stop').textContent=L().stop;$('helper').textContent=L().helper;$('reset').textContent=L().reset;$('zones').textContent=L().zones;$('vip').textContent=L().vip;$('info').textContent=L().info;document.querySelector('#assistant h2').textContent=L().assistantTitle;$('assistant').querySelector('.muted').textContent=L().receptionMeta;$('close').textContent=L().close;document.querySelector('#orderBox strong').textContent=L().orderTitle;$('confirm').textContent=L().confirm;$('clear').textContent=L().clear;$('voice').textContent=voiceOn?L().voiceOn:L().voiceOff;document.querySelector('.hint').textContent=L().hint;renderCart();showActions();updateStage(stage,false);if(!lastSpeech){$('reply').textContent=L().assistantIntro;$('note').textContent=L().welcome;}}
-function btn(label,fn){const b=document.createElement('button');b.textContent=label;b.addEventListener('click',fn);$('actions').appendChild(b)}function addItem(name,price){cart[name]??={qty:0,price};cart[name].qty++;renderCart();speak(L().addMsg(name))}function renderCart(){const items=Object.entries(cart).filter(([_,v])=>v.qty);$('cart').innerHTML=items.length?items.map(([k,v])=>`<div class="order"><span>${k} ×${v.qty} · $${(v.qty*v.price).toLocaleString('es-CO')}</span></div>`).join('')+`<strong>${lang==='es'?'Total demo':lang==='en'?'Demo total':'演示总计'}: $${items.reduce((s,[k,v])=>s+v.qty*v.price,0).toLocaleString('es-CO')}</strong>`:L().emptyCart}
-const placeMap={reception:['Recepción','Reception','前台',-22,-12],vip:['Lounge VIP','VIP Lounge','VIP 贵宾厅',19,32],restaurant:['Restaurante / bar','Restaurant / bar','餐厅 / 酒吧',32,2],fields:['Campos deportivos','Sports fields','运动场',23,43],minigolf:['Minigolf','Minigolf','迷你高尔夫',53,39],bath:['Baños','Restrooms','洗手间',25,-17],info:['Información','Information','信息点',7,-17],regular:['Zona regular','Regular zone','普通区域',54,26]};function placeName(key){return placeMap[key][lang==='es'?0:lang==='en'?1:2]}function placeXYZ(key){return [placeName(key),placeMap[key][3],placeMap[key][4]]}function places(){return Object.keys(placeMap).map(k=>placeXYZ(k))}// Navegación A*: cuadrícula sobre espacio libre. Edificios son zonas sólidas;
-// accesos se sitúan delante de sus fachadas, nunca dentro de paredes o cristales.
-const blockers=[
- [-22.9,2.9,-2.3,12.5], // recepción
- [6.8,35.2,12.6,29.3],  // lounge VIP
- [20.6,43.4,-14.2,.1],  // restaurante
- [46.6,61.4,11.6,24.4],// zona regular
- [.6,13.4,-29.2,-18.8], // información
- [18.6,31.4,-29.2,-18.8],// baños
- [-82,-33,-5,33],       // lago y su margen
- [-8,7,31,45],         // piscina y jardín acuático
-];
-const fixedFurniture=[[-14, -6, 8, 11], [11,27,24,29]]; // evitamos mobiliario en circulación
-// Radio de separación aplicado a cualquier ruta y a movimiento manual.
-const bodyRadius=.48;
-function blocked(x,z,r=bodyRadius){
- if(x<-31||x>77||z<-35||z>77)return true;
- for(const b of blockers){if(x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r)return true;}
- for(const b of fixedFurniture){if(x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r)return true;}
- return false;
-}
-const gridStep=1.2, xmin=-30, zmin=-34, nx=90, nz=92;
-const idx=(i,j)=>i+j*nx;
-function freeLine(a,b){const d=Math.hypot(b[0]-a[0],b[1]-a[1]),steps=Math.ceil(d/.32);
- for(let k=0;k<=steps;k++){let t=k/Math.max(1,steps);if(blocked(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t))return false;}return true;}
-function findPath(start,goal){
- const toCell=p=>[Math.round((p[0]-xmin)/gridStep),Math.round((p[1]-zmin)/gridStep)];
- const toPoint=(i,j)=>[xmin+i*gridStep,zmin+j*gridStep];
- const [si,sj]=toCell(start),[gi,gj]=toCell(goal);
- if(blocked(...start)||blocked(...goal))return null;
- let endCell=[gi,gj];
- if(blocked(...toPoint(gi,gj))){let best=null;for(let rad=1;rad<=4&&!best;rad++)for(let di=-rad;di<=rad;di++)for(let dj=-rad;dj<=rad;dj++){
- let q=toPoint(gi+di,gj+dj);if(!blocked(...q)&&freeLine(q,goal)){best=[gi+di,gj+dj];break;}}
- if(!best)return null;endCell=best;}
- const end=idx(...endCell),initial=idx(si,sj),open=[initial],came=new Int32Array(nx*nz).fill(-1),cost=new Float32Array(nx*nz).fill(Infinity),priority=new Float32Array(nx*nz).fill(Infinity),seen=new Uint8Array(nx*nz);
- cost[initial]=0;priority[initial]=0;
- let found=false;
- while(open.length){let bi=0;for(let i=1;i<open.length;i++)if(priority[open[i]]<priority[open[bi]])bi=i;
- const cur=open.splice(bi,1)[0];if(seen[cur])continue;seen[cur]=1;if(cur===end){found=true;break;}
- let cx=cur%nx,cz=Math.floor(cur/nx);
- for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]){
- let i=cx+dx,j=cz+dz;if(i<0||j<0||i>=nx||j>=nz)continue;let q=toPoint(i,j);if(blocked(...q))continue;
- if(dx&&dz&&(blocked(...toPoint(cx+dx,cz))||blocked(...toPoint(cx,cz+dz))))continue;
- const n=idx(i,j),candidate=cost[cur]+Math.hypot(dx,dz);
- if(candidate<cost[n]){cost[n]=candidate;came[n]=cur;priority[n]=candidate+Math.hypot(i-endCell[0],j-endCell[1]);open.push(n);}
- }
- }
- if(!found)return null;
- let route=[goal],cur=end,guard=0;while(cur!==initial&&guard++<nx*nz){route.push(toPoint(cur%nx,Math.floor(cur/nx)));cur=came[cur];if(cur<0)return null;}route.push(start);route.reverse();
- // Reducción de nodos: se comprueba toda la línea antes de eliminar esquinas.
- let clean=[route[0]],i=0;while(i<route.length-1){let j=route.length-1;while(j>i+1&&!freeLine(route[i],route[j]))j--;clean.push(route[j]);i=j;}
- return clean;
-}
-function safeMoveTo(x,z){const ox=camera.position.x,oz=camera.position.z;
- if(!blocked(x,z)){camera.position.x=x;camera.position.z=z;return;}
- if(!blocked(x,oz))camera.position.x=x;
- if(!blocked(camera.position.x,z))camera.position.z=z;
-}
-function beginJourney(name,x,z){
- destinationIsVip=(x===19&&z===32);currentDestination=name;autopilot=false;pathIndex=0;progress=0;
- const start=[camera.position.x,camera.position.z],route=findPath(start,[x,z]);
- if(!route||route.length<2){notify(L().noPath);return;}
- points=route.map(p=>new THREE.Vector3(p[0],.095,p[1]));drawRoute();routeGroup.visible=true;
- arrival.position.set(x,.11,z);$('assistant').classList.add('hidden');tourStarted=true;autopilot=true;updateStage(1);
- notify(L().routeSafe(name));
-}
-function goPlace(name,x,z){beginJourney(name,x,z)}
-function showActions(){const a=$('actions');a.replaceChildren();btn(L().reserve,()=>speak(L().reservationMsg));btn(L().menu,()=>speak(L().menuMsg));btn(L().drink,()=>{a.replaceChildren();btn('Mocktail · $22.000',()=>addItem(lang==='zh'?'莓果鸡尾酒':lang==='en'?'Mocktail':'Mocktail',22000));btn(lang==='zh'?'柠檬水 · $14.000':lang==='en'?'Lemonade · $14.000':'Limonada · $14.000',()=>addItem(lang==='zh'?'柠檬水':lang==='en'?'Lemonade':'Limonada',14000));btn(lang==='zh'?'咖啡 · $9.000':lang==='en'?'Coffee · $9.000':'Café · $9.000',()=>addItem(lang==='zh'?'咖啡':lang==='en'?'Coffee':'Café',9000));btn(L().back,showActions)});btn(L().snack,()=>{a.replaceChildren();btn(lang==='zh'?'意式烤面包 · $26.000':lang==='en'?'Bruschettas · $26.000':'Bruschettas · $26.000',()=>addItem(lang==='zh'?'意式烤面包':lang==='en'?'Bruschettas':'Bruschettas',26000));btn(lang==='zh'?'奶酪拼盘 · $38.000':lang==='en'?'Cheese board · $38.000':'Tabla de quesos · $38.000',()=>addItem(lang==='zh'?'奶酪拼盘':lang==='en'?'Cheese board':'Tabla de quesos',38000));btn(L().back,showActions)});btn(L().seeZones,()=>{a.replaceChildren();for(const p of places())btn(p[0],()=>{goPlace(...p);showActions()});btn(L().back,showActions)});btn(L().restaurant,()=>goPlace(...placeXYZ('restaurant')));btn(L().bathroom,()=>goPlace(...placeXYZ('bath')));btn(L().call,()=>speak(L().assistanceMsg));btn(L().help,()=>speak(L().helpMsg));}
-showActions();$('tour').onclick=()=>beginJourney(...placeXYZ('vip'));$('stop').onclick=()=>{autopilot=false;notify(L().paused)};$('reset').onclick=()=>{autopilot=false;document.exitPointerLock?.();camera.position.set(-22,1.68,-18);yaw=-.18;pitch=0;camera.rotation.set(0,yaw,0,'YXZ');tourStarted=false;updateStage(0);$('assistant').classList.remove('hidden');routeGroup.visible=false;showActions();$('reply').textContent=L().assistantIntro;notify(L().resetMsg)};$('helper').onclick=$('info').onclick=()=>{$('assistant').classList.toggle('hidden');speak(L().assistantShort)};$('close').onclick=()=>$('assistant').classList.add('hidden');$('zones').onclick=()=>{showActions();$('assistant').classList.remove('hidden');$('actions').children[4].click()};$('vip').onclick=()=>goPlace(...placeXYZ('vip'));$('voice').onclick=()=>{voiceOn=!voiceOn;$('voice').textContent=voiceOn?L().voiceOn:L().voiceOff;if(!voiceOn&&'speechSynthesis'in window)speechSynthesis.cancel()};$('clear').onclick=()=>{cart={};renderCart();speak(L().clearMsg)};$('confirm').onclick=()=>{const n=Object.values(cart).reduce((n,v)=>n+v.qty,0);if(!n){speak(L().emptyOrderMsg);return}cart={};renderCart();speak(L().confirmMsg(n))};
-$('langSelect').addEventListener('change',e=>{lang=e.target.value;lastSpeech='';if(destinationIsVip)currentDestination=placeName('vip');refreshLanguage();if(typeof setVRPage==='function')setVRPage(vrMenuPage);speak(L().assistantShort)});refreshLanguage();
-// Mouse and touch navigation
-let freeLook=false;renderer.domElement.addEventListener('pointerdown',e=>{if(renderer.xr.isPresenting)return;drag=true;lastX=e.clientX;lastY=e.clientY;if(!freeLook&&e.button===0&&document.pointerLockElement!==renderer.domElement){renderer.domElement.requestPointerLock?.()}});document.addEventListener('pointerlockchange',()=>{freeLook=document.pointerLockElement===renderer.domElement;notify(freeLook?L().lookOn:L().lookOff)});window.addEventListener('pointerup',()=>drag=false);window.addEventListener('pointermove',e=>{if(renderer.xr.isPresenting)return;if(freeLook){yaw-=e.movementX*.0045;pitch=THREE.MathUtils.clamp(pitch-e.movementY*.0038,-1.2,1.2);return}if(!drag)return;yaw-=(e.clientX-lastX)*.0052;pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lastY)*.0046,-1.2,1.2);lastX=e.clientX;lastY=e.clientY});const keys={};window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;keys[e.key.toLowerCase()]=true;if('wasd'.includes(e.key.toLowerCase()))e.preventDefault()});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);$('lookBtn').onclick=()=>{if(document.pointerLockElement===renderer.domElement){document.exitPointerLock?.()}else{renderer.domElement.requestPointerLock?.();notify(L().lookHelp)}};document.querySelectorAll('[data-move]').forEach(b=>{const key={forward:'w',back:'s',left:'a',right:'d'}[b.dataset.move];b.addEventListener('pointerdown',e=>{e.preventDefault();keys[key]=true;b.setPointerCapture(e.pointerId)});for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys[key]=false)});
-// VR interaction: ray pointer and floating menu panels; controller thumbstick locomotion
-// VR locomotion lives in an XR rig, never on the tracked headset camera.
-const xrRig=new THREE.Group();scene.add(xrRig);
-let xrActive=false;
-const xrWorldPos=new THREE.Vector3(),xrFwd=new THREE.Vector3(),xrFacing=new THREE.Euler();
-renderer.xr.addEventListener('sessionstart',()=>{
-  xrActive=true;
-  document.exitPointerLock?.();
-  autopilot=false; // stop desktop automation before headset tracking begins
-  xrRig.position.set(camera.position.x,0,camera.position.z);
-  xrRig.add(camera);
-  camera.position.set(0,0,0);
-  camera.rotation.set(0,0,0);
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.0));renderer.shadowMap.enabled=false;
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+import { XRHandModelFactory } from 'three/addons/webxr/XRHandModelFactory.js';
+
+// ============================================================================
+// Constants & helpers
+// ============================================================================
+const $ = id => document.getElementById(id);
+const clamp = THREE.MathUtils.clamp;
+const lerp = THREE.MathUtils.lerp;
+const damp = (a, b, k, dt) => a + (b - a) * (1 - Math.exp(-k * dt));
+const TAU = Math.PI * 2;
+const angDiff = (a, b) => { let d = (a - b) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; };
+const dampAngle = (a, b, k, dt) => a + angDiff(b, a) * (1 - Math.exp(-k * dt));
+const STEP = 0.36;          // max step-up height (m)
+const PLAYER_R = 0.28;      // player body radius (m)
+const EYE = 1.65;           // desktop eye height (m)
+const SEAT_OFFSET = 0.45;   // extra height in seated mode (VR)
+const BOUNDS = { x0: -47.2, x1: 49.2, z0: -51.2, z1: 35.6 };
+const SPAWN = { x: 0, z: 33, yaw: 0 };
+const UI_FONT = '"Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif';
+const SERIF = 'Georgia, "Noto Serif", "Noto Serif SC", "Songti SC", "Times New Roman", serif';
+
+function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rand = mulberry32(20261024);
+const fmt = n => '$' + n.toLocaleString('es-CO');
+
+// ============================================================================
+// Settings (per-viewer convenience, safe if storage is blocked)
+// ============================================================================
+const settings = { lang: 'es', voice: true, snapTurn: true, vignette: true, shadows: true, seated: false };
+try { Object.assign(settings, JSON.parse(localStorage.getItem('nclub-settings') || '{}')); } catch { /* storage unavailable */ }
+const saveSettings = () => { try { localStorage.setItem('nclub-settings', JSON.stringify(settings)); } catch { /* ignore */ } };
+
+// ============================================================================
+// i18n
+// ============================================================================
+const TXT = {
+  es: {
+    intro: 'Recorre NClub en realidad virtual directamente desde Meta Quest Browser, sin instalar apps ni activar el modo desarrollador. Habla con los AGIBOT, pide en el lounge y juega en las zonas deportivas.',
+    enterVR: '🥽 Entrar en VR', explore: '🖥️ Explorar en pantalla', resume: '▶ Continuar en pantalla',
+    vrChecking: 'Comprobando WebXR…', vrOk: 'Visor compatible detectado. Pulsa «Entrar en VR».',
+    vrNoHttps: 'La VR exige HTTPS: publica este HTML en GitHub Pages, Vercel o Netlify.',
+    vrNoXR: 'WebXR no está disponible aquí. Abre esta página en Meta Quest Browser.',
+    vrNoImmersive: 'Este navegador no permite sesiones immersive-vr.', vrFail: m => 'No se pudo iniciar la VR: ' + m,
+    controlsVR: 'Controles Meta Quest', controlsDesk: 'Controles en pantalla',
+    ctlVR: ['Stick izquierdo: caminar · presiónalo para correr', 'Stick derecho: girar · empújalo hacia delante para teletransportarte', 'Gatillo: pulsar paneles y hablar con los robots', 'Grip (o gatillo sobre un objeto): agarrar y lanzar', 'X: menú de muñeca · Y: asistente AGIBOT', 'A: avanzar por la ruta · B: recentrar paneles', 'Manos: pellizca para pulsar · pellizco izquierdo al aire = menú'],
+    ctlDesk: ['W A S D / flechas: caminar · Shift: correr · Espacio: saltar', 'Ratón: mirar (clic en la escena para capturar, Esc para soltar)', 'Clic: pulsar paneles, hablar, agarrar y lanzar · E / clic derecho: soltar', 'Q: asistente · M: menú · T: avanzar ruta · G: caminar solo'],
+    deskHelp: 'WASD caminar · Ratón mirar · Clic interactuar/lanzar · E soltar · Q asistente · M menú · T avanzar ruta',
+    hudMenu: '☰ Menú', hudAssistant: '💬 Asistente',
+    welcome: 'Bienvenido a NClub. El AGIBOT te espera en recepción: acércate para elegir tu experiencia.',
+    assistantIntro: 'Bienvenido a NClub, soy tu asistente. ¿Qué necesitas? Puedo consultar tu reserva, mostrarte el menú o llevarte a cualquier zona. Solo iniciamos el recorrido cuando lo indiques.',
+    assistantShort: 'Hola de nuevo. ¿En qué te ayudo?',
+    reservationMsg: 'Reserva VIP de demostración confirmada a nombre de Valentina Pérez, para dos personas a las siete de la noche, mesa número cuatro.',
+    menuMsg: 'Nuestro menú de demostración ofrece mocktail de frutos rojos, limonada, café especial, bruschettas y tabla de quesos.',
+    assistanceMsg: 'He generado una solicitud ficticia de asistencia. Un colaborador del club te atendería en este punto.',
+    helpMsg: 'Puedo revisar una reserva ficticia, mostrar el menú, tomar tu pedido y guiarte a cualquier zona. También puedes agarrar objetos, lanzar pelotas en el frontón y jugar minigolf.',
+    addMsg: n => `Agregué ${n} a tu pedido. ¿Deseas algo más?`,
+    emptyOrderMsg: 'Agrega una bebida o un snack antes de confirmar.',
+    clearMsg: 'He vaciado el pedido de demostración.',
+    confirmMsg: n => `Pedido simulado registrado con ${n} ${n === 1 ? 'producto' : 'productos'}.`,
+    servedMsg: 'Te lo dejé servido en la barra: tómalo con el grip o con un clic.',
+    routeSafe: n => `Camino seguro hacia ${n}: sigue las luces ámbar.`,
+    followMe: n => `Sígueme, te acompaño a ${n}. Sigue las luces ámbar.`,
+    noPath: 'No encontré un camino seguro desde aquí. Acércate a un sendero e inténtalo de nuevo.',
+    arrivedVip: 'Llegaste al lounge VIP. Soy el segundo asistente NClub. ¿Deseas consultar tu reserva, ver el menú o realizar un pedido?',
+    arrivedOther: n => `Hemos llegado a ${n}. Puedes elegir otra zona o pedir ayuda.`,
+    guideCancelled: 'Guía cancelada. Puedes explorar libremente.',
+    resetMsg: 'Estás en la entrada. Acércate a recepción para empezar.',
+    noRoute: 'Primero elige un destino en el asistente.',
+    golfSunk: n => `¡Hoyo! Lo lograste en ${n} ${n === 1 ? 'golpe' : 'golpes'}.`,
+    pageMain: '¿En qué te ayudo?', pageDrinks: 'Bebidas', pageSnacks: 'Snacks', pageZones: 'Zonas del club', pageOrder: 'Tu pedido', pageControls: 'Controles',
+    reserve: '📋 Consultar reserva', menu: '🍽️ Ver menú VIP', drink: '🍹 Pedir bebida', snack: '🥪 Pedir snack', zones: '🗺️ Zonas del club',
+    guideVip: '✦ Guíame al lounge VIP', call: '🔔 Llamar asistencia', help: '❔ Ayuda', jump: '⚡ Saltar al destino', cancel: '✖ Cancelar guía', back: '↩ Volver',
+    viewOrder: n => `🛒 Ver pedido (${n})`, confirm: '✔ Confirmar pedido', clear: '🗑 Vaciar', orderTitle: 'Tu pedido', total: 'Total demo', emptyCart: 'Aún no has seleccionado productos.',
+    speakerReception: 'Recepción', speakerVip: 'Lounge VIP', clubPaths: 'Senderos de NClub', time: '18:20',
+    menuTitle: 'MENÚ', mAssistant: '💬 Asistente', mZones: '🗺️ Zonas', mHop: '➜ Avanzar ruta', mJump: '⚡ Ir al destino', mLang: '🌐 Idioma: ES',
+    mVoice: on => on ? '🔊 Voz: sí' : '🔇 Voz: no', mTurn: s => s ? '↻ Giro: 45°' : '↻ Giro: suave', mVignette: on => `◐ Viñeta: ${on ? 'sí' : 'no'}`,
+    mShadows: on => `☀ Sombras: ${on ? 'sí' : 'no'}`, mSeated: on => `🪑 Sentado: ${on ? 'sí' : 'no'}`, mControls: '🎮 Controles', mReset: '⟲ Reiniciar', mExit: '⏏ Salir de VR', mClose: '✕ Cerrar',
+    welcomeSign: 'BIENVENIDOS A NCLUB', receptionSign: 'RECEPCIÓN', vipSign: 'LOUNGE VIP', conciergeSign: 'CONCIERGE VIP', restSign: 'RESTAURANTE · BAR', infoSign: 'INFORMACIÓN',
+    bathSign: 'BAÑOS', regularSign: 'ZONA REGULAR', fieldsSign: 'CAMPOS DEPORTIVOS', golfSign: 'MINIGOLF', gardensSign: 'ZONA SOCIAL · JARDINES', wallSign: 'FRONTÓN'
+  },
+  en: {
+    intro: 'Explore NClub in virtual reality straight from Meta Quest Browser, with no apps to install and no developer mode. Talk to the AGIBOTs, order at the lounge and play in the sports areas.',
+    enterVR: '🥽 Enter VR', explore: '🖥️ Explore on screen', resume: '▶ Continue on screen',
+    vrChecking: 'Checking WebXR…', vrOk: 'Compatible headset detected. Press “Enter VR”.',
+    vrNoHttps: 'VR requires HTTPS: publish this HTML on GitHub Pages, Vercel or Netlify.',
+    vrNoXR: 'WebXR is not available here. Open this page in Meta Quest Browser.',
+    vrNoImmersive: 'This browser does not allow immersive-vr sessions.', vrFail: m => 'Could not start VR: ' + m,
+    controlsVR: 'Meta Quest controls', controlsDesk: 'On-screen controls',
+    ctlVR: ['Left stick: walk · click it to run', 'Right stick: turn · push forward to teleport', 'Trigger: press panels and talk to robots', 'Grip (or trigger on an object): grab and throw', 'X: wrist menu · Y: AGIBOT assistant', 'A: advance along the route · B: recenter panels', 'Hands: pinch to press · left pinch in the air = menu'],
+    ctlDesk: ['W A S D / arrows: walk · Shift: run · Space: jump', 'Mouse: look (click the scene to capture, Esc to release)', 'Click: press panels, talk, grab and throw · E / right click: drop', 'Q: assistant · M: menu · T: advance route · G: auto-walk'],
+    deskHelp: 'WASD walk · Mouse look · Click interact/throw · E drop · Q assistant · M menu · T advance route',
+    hudMenu: '☰ Menu', hudAssistant: '💬 Assistant',
+    welcome: 'Welcome to NClub. The AGIBOT is waiting at reception: walk up to choose your experience.',
+    assistantIntro: 'Welcome to NClub, I am your assistant. What do you need? I can check your booking, show you the menu or take you to any area. We only start the route when you ask.',
+    assistantShort: 'Hello again. How can I help?',
+    reservationMsg: 'Demo VIP booking confirmed for Valentina Pérez, party of two at seven p.m., table number four.',
+    menuMsg: 'Our demo menu offers a berry mocktail, lemonade, specialty coffee, bruschettas and a cheese board.',
+    assistanceMsg: 'I have created a fictional assistance request. A club staff member would help you at this point.',
+    helpMsg: 'I can review a fictional booking, show the menu, take your order and guide you to any area. You can also grab objects, throw balls at the practice wall and play minigolf.',
+    addMsg: n => `I added ${n} to your order. Anything else?`,
+    emptyOrderMsg: 'Add a drink or a snack before confirming.',
+    clearMsg: 'I have cleared the demo order.',
+    confirmMsg: n => `Demo order recorded with ${n} ${n === 1 ? 'item' : 'items'}.`,
+    servedMsg: 'It is served on the counter: pick it up with the grip or a click.',
+    routeSafe: n => `Safe path to ${n}: follow the amber lights.`,
+    followMe: n => `Follow me, I will walk you to ${n}. Follow the amber lights.`,
+    noPath: 'I could not find a safe path from here. Get closer to a walkway and try again.',
+    arrivedVip: 'You arrived at the VIP lounge. I am the second NClub assistant. Would you like to check your booking, view the menu or place an order?',
+    arrivedOther: n => `We have arrived at ${n}. You can choose another area or ask for help.`,
+    guideCancelled: 'Guide cancelled. You can explore freely.',
+    resetMsg: 'You are at the entrance. Walk up to reception to begin.',
+    noRoute: 'Choose a destination in the assistant first.',
+    golfSunk: n => `Hole! You made it in ${n} ${n === 1 ? 'stroke' : 'strokes'}.`,
+    pageMain: 'How can I help?', pageDrinks: 'Drinks', pageSnacks: 'Snacks', pageZones: 'Club areas', pageOrder: 'Your order', pageControls: 'Controls',
+    reserve: '📋 Check booking', menu: '🍽️ View VIP menu', drink: '🍹 Order drink', snack: '🥪 Order snack', zones: '🗺️ Club areas',
+    guideVip: '✦ Guide me to the VIP lounge', call: '🔔 Call assistance', help: '❔ Help', jump: '⚡ Jump to destination', cancel: '✖ Cancel guide', back: '↩ Back',
+    viewOrder: n => `🛒 View order (${n})`, confirm: '✔ Confirm order', clear: '🗑 Clear', orderTitle: 'Your order', total: 'Demo total', emptyCart: 'You have not selected any products yet.',
+    speakerReception: 'Reception', speakerVip: 'VIP Lounge', clubPaths: 'NClub walkways', time: '6:20 PM',
+    menuTitle: 'MENU', mAssistant: '💬 Assistant', mZones: '🗺️ Areas', mHop: '➜ Advance route', mJump: '⚡ Go to destination', mLang: '🌐 Language: EN',
+    mVoice: on => on ? '🔊 Voice: on' : '🔇 Voice: off', mTurn: s => s ? '↻ Turn: 45°' : '↻ Turn: smooth', mVignette: on => `◐ Vignette: ${on ? 'on' : 'off'}`,
+    mShadows: on => `☀ Shadows: ${on ? 'on' : 'off'}`, mSeated: on => `🪑 Seated: ${on ? 'on' : 'off'}`, mControls: '🎮 Controls', mReset: '⟲ Reset', mExit: '⏏ Exit VR', mClose: '✕ Close',
+    welcomeSign: 'WELCOME TO NCLUB', receptionSign: 'RECEPTION', vipSign: 'VIP LOUNGE', conciergeSign: 'VIP CONCIERGE', restSign: 'RESTAURANT · BAR', infoSign: 'INFORMATION',
+    bathSign: 'RESTROOMS', regularSign: 'REGULAR ZONE', fieldsSign: 'SPORTS FIELDS', golfSign: 'MINIGOLF', gardensSign: 'SOCIAL ZONE · GARDENS', wallSign: 'PRACTICE WALL'
+  },
+  zh: {
+    intro: '直接在 Meta Quest 浏览器中以虚拟现实游览 NClub，无需安装应用或开启开发者模式。与 AGIBOT 交谈、在贵宾厅点单，并在运动区游玩。',
+    enterVR: '🥽 进入 VR', explore: '🖥️ 在屏幕上浏览', resume: '▶ 继续屏幕浏览',
+    vrChecking: '正在检查 WebXR…', vrOk: '已检测到兼容头显。请点击“进入 VR”。',
+    vrNoHttps: 'VR 需要 HTTPS：请将此 HTML 发布到 GitHub Pages、Vercel 或 Netlify。',
+    vrNoXR: '此处无法使用 WebXR。请在 Meta Quest 浏览器中打开本页。',
+    vrNoImmersive: '此浏览器不支持 immersive-vr 会话。', vrFail: m => '无法启动 VR：' + m,
+    controlsVR: 'Meta Quest 手柄操作', controlsDesk: '屏幕操作',
+    ctlVR: ['左摇杆：行走 · 按下摇杆奔跑', '右摇杆：转向 · 向前推可瞬移', '扳机：点击面板、与机器人交谈', '握把（或对物体按扳机）：抓取与投掷', 'X：手腕菜单 · Y：AGIBOT 助手', 'A：沿路线前进 · B：面板回正', '手势：捏合点击 · 左手空中捏合 = 菜单'],
+    ctlDesk: ['W A S D / 方向键：行走 · Shift：奔跑 · 空格：跳跃', '鼠标：环顾（点击场景锁定，Esc 释放）', '点击：按面板、交谈、抓取与投掷 · E / 右键：放下', 'Q：助手 · M：菜单 · T：沿路线前进 · G：自动行走'],
+    deskHelp: 'WASD 行走 · 鼠标环顾 · 点击交互/投掷 · E 放下 · Q 助手 · M 菜单 · T 前进',
+    hudMenu: '☰ 菜单', hudAssistant: '💬 助手',
+    welcome: '欢迎来到 NClub。AGIBOT 正在前台等你：走近即可选择你的体验。',
+    assistantIntro: '欢迎来到 NClub，我是你的助手。你需要什么？我可以查询预订、展示菜单，或带你前往任何区域。只有在你确认后才会开始路线。',
+    assistantShort: '又见面了。需要我帮什么？',
+    reservationMsg: '演示 VIP 预订已确认：Valentina Pérez，两位客人，晚上七点，四号桌。',
+    menuMsg: '演示菜单包含莓果无酒精鸡尾酒、柠檬水、精品咖啡、意式烤面包和奶酪拼盘。',
+    assistanceMsg: '我已生成一个模拟协助请求。俱乐部工作人员会在这里为你服务。',
+    helpMsg: '我可以查询模拟预订、展示菜单、为你点单并带你前往任何区域。你还可以抓取物体、对着练习墙投球、玩迷你高尔夫。',
+    addMsg: n => `我已将 ${n} 加入你的订单。还需要别的吗？`,
+    emptyOrderMsg: '请先添加饮品或小吃再确认。',
+    clearMsg: '我已清空演示订单。',
+    confirmMsg: n => `模拟订单已记录，共 ${n} 件商品。`,
+    servedMsg: '已为你放在吧台上：用握把或点击即可拿起。',
+    routeSafe: n => `前往 ${n} 的安全路线：请沿着琥珀色灯光前进。`,
+    followMe: n => `请跟我来，我带你去 ${n}。沿着琥珀色灯光前进。`,
+    noPath: '从这里找不到安全路线。请靠近步道后再试。',
+    arrivedVip: '你已到达 VIP 贵宾厅。我是第二位 NClub 助手。想查询预订、查看菜单还是下单？',
+    arrivedOther: n => `我们已到达 ${n}。你可以选择其他区域或寻求帮助。`,
+    guideCancelled: '已取消引导。你可以自由探索。',
+    resetMsg: '你在入口处。走近前台即可开始。',
+    noRoute: '请先在助手中选择目的地。',
+    golfSunk: n => `进洞！你用了 ${n} 杆。`,
+    pageMain: '需要我帮什么？', pageDrinks: '饮品', pageSnacks: '小吃', pageZones: '俱乐部区域', pageOrder: '你的订单', pageControls: '操作说明',
+    reserve: '📋 查询预订', menu: '🍽️ 查看 VIP 菜单', drink: '🍹 点饮品', snack: '🥪 点小吃', zones: '🗺️ 俱乐部区域',
+    guideVip: '✦ 带我去 VIP 贵宾厅', call: '🔔 呼叫协助', help: '❔ 帮助', jump: '⚡ 直达目的地', cancel: '✖ 取消引导', back: '↩ 返回',
+    viewOrder: n => `🛒 查看订单 (${n})`, confirm: '✔ 确认订单', clear: '🗑 清空', orderTitle: '你的订单', total: '演示总计', emptyCart: '你还没有选择任何商品。',
+    speakerReception: '前台', speakerVip: 'VIP 贵宾厅', clubPaths: 'NClub 步道', time: '18:20',
+    menuTitle: '菜单', mAssistant: '💬 助手', mZones: '🗺️ 区域', mHop: '➜ 沿路线前进', mJump: '⚡ 直达目的地', mLang: '🌐 语言：中文',
+    mVoice: on => on ? '🔊 语音：开' : '🔇 语音：关', mTurn: s => s ? '↻ 转向：45°' : '↻ 转向：平滑', mVignette: on => `◐ 晕动遮罩：${on ? '开' : '关'}`,
+    mShadows: on => `☀ 阴影：${on ? '开' : '关'}`, mSeated: on => `🪑 坐姿：${on ? '开' : '关'}`, mControls: '🎮 操作说明', mReset: '⟲ 重置', mExit: '⏏ 退出 VR', mClose: '✕ 关闭',
+    welcomeSign: '欢迎来到 NCLUB', receptionSign: '前台', vipSign: 'VIP 贵宾厅', conciergeSign: 'VIP 礼宾', restSign: '餐厅 · 酒吧', infoSign: '信息点',
+    bathSign: '洗手间', regularSign: '普通区域', fieldsSign: '运动场', golfSign: '迷你高尔夫', gardensSign: '社交区 · 花园', wallSign: '练习墙'
+  }
+};
+const t = (k, ...a) => { const v = TXT[settings.lang][k] ?? TXT.es[k]; return typeof v === 'function' ? v(...a) : v; };
+const pick = o => o[settings.lang] ?? o.es;
+
+const ITEMS = {
+  mocktail: { kind: 'drink', price: 22000, color: 0xb8243f, name: { es: 'Mocktail de frutos rojos', en: 'Berry mocktail', zh: '莓果无酒精鸡尾酒' } },
+  lemonade: { kind: 'drink', price: 14000, color: 0xf3e07a, name: { es: 'Limonada', en: 'Lemonade', zh: '柠檬水' } },
+  coffee: { kind: 'drink', price: 9000, color: 0x4a2c1a, name: { es: 'Café especial', en: 'Specialty coffee', zh: '精品咖啡' } },
+  bruschetta: { kind: 'snack', price: 26000, color: 0xc9772f, name: { es: 'Bruschettas', en: 'Bruschettas', zh: '意式烤面包' } },
+  cheese: { kind: 'snack', price: 38000, color: 0xf0c75a, name: { es: 'Tabla de quesos', en: 'Cheese board', zh: '奶酪拼盘' } }
+};
+
+// x/z: where the visitor is guided to · area: [cx, cz, radius] used to name the current location
+const ZONES = {
+  reception: { x: -3.2, z: 19.7, area: [0, 18, 8], name: { es: 'Recepción', en: 'Reception', zh: '前台' } },
+  vip: { x: 29.6, z: -4, area: [27, -4, 8.5], name: { es: 'Lounge VIP', en: 'VIP Lounge', zh: 'VIP 贵宾厅' } },
+  restaurant: { x: -18.8, z: -4, area: [-24, -4, 8], name: { es: 'Restaurante / bar', en: 'Restaurant / bar', zh: '餐厅 / 酒吧' } },
+  gardens: { x: 0, z: -21.5, area: [0, -29, 10], name: { es: 'Jardines y piscina', en: 'Gardens & pool', zh: '花园与泳池' } },
+  fields: { x: 30, z: -21.4, area: [32, -32, 12], name: { es: 'Campos deportivos', en: 'Sports fields', zh: '运动场' } },
+  minigolf: { x: -26, z: -27.4, area: [-25, -33, 8], name: { es: 'Minigolf', en: 'Minigolf', zh: '迷你高尔夫' } },
+  info: { x: -6.4, z: 31, area: [-11, 31, 5], name: { es: 'Información', en: 'Information', zh: '信息点' } },
+  bath: { x: 6.4, z: 31, area: [11, 31, 5], name: { es: 'Baños', en: 'Restrooms', zh: '洗手间' } },
+  regular: { x: 24.2, z: 25, area: [30, 25, 7], name: { es: 'Zona regular', en: 'Regular zone', zh: '普通区域' } },
+  plaza: { x: 0, z: -9.5, area: [0, -4, 9.5], hidden: true, name: { es: 'Plaza de la fuente', en: 'Fountain plaza', zh: '喷泉广场' } }
+};
+const ZONE_ORDER = ['reception', 'vip', 'restaurant', 'gardens', 'fields', 'minigolf', 'info', 'bath', 'regular'];
+const zoneName = k => pick(ZONES[k].name);
+
+// ============================================================================
+// Renderer, scene, rig
+// ============================================================================
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = settings.shadows;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.xr.enabled = true;
+renderer.xr.setReferenceSpaceType('local-floor');
+renderer.xr.setFoveation(1);
+$('app').appendChild(renderer.domElement);
+const MAX_ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xc8b3a2, 45, 250);
+
+// The rig is the player's feet; locomotion only ever moves the rig, never the tracked camera.
+const rig = new THREE.Group();
+scene.add(rig);
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 1000);
+camera.rotation.order = 'YXZ';
+camera.position.set(0, EYE, 0);
+rig.add(camera);
+
+// ---------- Sky & image-based lighting ----------
+const SUN_DIR = new THREE.Vector3(-0.55, 0.32, -0.77).normalize();
+const srgbVec = hex => new THREE.Vector3(((hex >> 16) & 255) / 255, ((hex >> 8) & 255) / 255, (hex & 255) / 255);
+const skyMat = new THREE.ShaderMaterial({
+  uniforms: { top: { value: srgbVec(0x4a73a6) }, mid: { value: srgbVec(0xeab995) }, bottom: { value: srgbVec(0x8e8a84) }, sunDir: { value: SUN_DIR }, sunCol: { value: srgbVec(0xffd9a0) } },
+  vertexShader: 'varying vec3 vDir; void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform vec3 top, mid, bottom, sunDir, sunCol; varying vec3 vDir;
+    void main(){
+      vec3 d = normalize(vDir); float h = d.y;
+      vec3 col = mix(mid, top, smoothstep(0.0, 0.55, h));
+      col = mix(col, bottom, smoothstep(0.0, -0.22, h));
+      float s = max(dot(d, normalize(sunDir)), 0.0);
+      col += sunCol * (pow(s, 900.0) * 6.0 + pow(s, 14.0) * 0.32 + pow(s, 3.0) * 0.07);
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+  side: THREE.BackSide, depthWrite: false, fog: false
 });
-renderer.xr.addEventListener('sessionend',()=>{
-  const world=camera.getWorldPosition(new THREE.Vector3());
-  scene.attach(camera);
-  xrRig.remove(camera);
-  camera.position.set(world.x,1.68,world.z);
-  camera.rotation.set(pitch,yaw,0,'YXZ');
-  xrActive=false;
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.shadowMap.enabled=true;
+const sky = new THREE.Mesh(new THREE.SphereGeometry(800, 32, 16), skyMat);
+sky.frustumCulled = false;
+sky.renderOrder = -10;
+scene.add(sky);
+{
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envScene = new THREE.Scene();
+  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), skyMat));
+  scene.environment = pmrem.fromScene(envScene, 0.02).texture;
+  scene.environmentIntensity = 0.55;
+  pmrem.dispose();
+}
+scene.add(new THREE.HemisphereLight(0xcfe0f0, 0x5a6347, 0.8));
+const sun = new THREE.DirectionalLight(0xffcf98, 2.7);
+sun.castShadow = settings.shadows;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 200 });
+sun.shadow.bias = -0.0005;
+sun.shadow.normalBias = 0.04;
+scene.add(sun, sun.target);
+
+// ---------- Procedural textures ----------
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.anisotropy = MAX_ANISO;
+  return tex;
+}
+const grassTex = canvasTex(256, 256, (c, w, h) => {
+  c.fillStyle = '#4d6c40'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 6000; i++) {
+    c.fillStyle = `rgba(${40 + rand() * 45 | 0},${85 + rand() * 65 | 0},${35 + rand() * 30 | 0},${0.2 + rand() * 0.35})`;
+    c.fillRect(rand() * w, rand() * h, 1 + rand() * 2, 2 + rand() * 4);
+  }
+});
+grassTex.repeat.set(350, 350);
+const paveTex = canvasTex(256, 256, (c, w, h) => {
+  c.fillStyle = '#8e826e'; c.fillRect(0, 0, w, h);
+  const n = 4, s = w / n;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const v = 196 + rand() * 34 | 0, off = (y % 2) * s / 2;
+    c.fillStyle = `rgb(${v},${v - 12},${v - 32})`;
+    for (const dx of [0, -w]) c.fillRect(x * s + off + dx + 3, y * s + 3, s - 6, s - 6);
+  }
+});
+function makeWaterNormal() {
+  const s = 128, data = new Uint8Array(s * s * 4), hgt = new Float32Array(s * s);
+  const waves = [[3, 1, 0.9], [-2, 4, 0.6], [5, -3, 0.4], [1, 7, 0.3], [-6, -5, 0.25], [9, 2, 0.15]];
+  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+    let v = 0;
+    for (const [a, b, amp] of waves) v += Math.sin(TAU * (a * x + b * y) / s + a) * amp;
+    hgt[x + y * s] = v;
+  }
+  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+    const hx = hgt[((x + 1) % s) + y * s] - hgt[((x - 1 + s) % s) + y * s];
+    const hy = hgt[x + ((y + 1) % s) * s] - hgt[x + ((y - 1 + s) % s) * s];
+    const nx = -hx, ny = -hy, nz = 2.2, l = Math.hypot(nx, ny, nz), i = (x + y * s) * 4;
+    data[i] = (nx / l * 0.5 + 0.5) * 255; data[i + 1] = (ny / l * 0.5 + 0.5) * 255; data[i + 2] = (nz / l * 0.5 + 0.5) * 255; data[i + 3] = 255;
+  }
+  const tex = new THREE.DataTexture(data, s, s);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(5, 5); tex.needsUpdate = true;
+  return tex;
+}
+const waterNormal = makeWaterNormal();
+
+// ---------- Materials ----------
+const std = (color, roughness = 0.85, metalness = 0, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness, metalness, ...extra });
+const M = {
+  grass: std(0xffffff, 0.95, 0, { map: grassTex }),
+  pave: std(0xffffff, 0.9, 0, { map: paveTex }),
+  stone: std(0xb9b0a2), stoneDark: std(0x8c8478, 0.9),
+  wood: std(0x6b4a34, 0.7), woodLight: std(0x9b7652, 0.6),
+  cream: std(0xf1e4cb, 0.6), wall: std(0xd9cdb9), roof: std(0x34383a, 0.7, 0.1),
+  dark: std(0x22262b, 0.45, 0.3), gold: std(0xd3a862, 0.3, 0.8),
+  glass: std(0xa3cad2, 0.05, 0.2, { transparent: true, opacity: 0.26, depthWrite: false }),
+  hedge: std(0x2f5233, 0.95), trunk: std(0x5a4130, 0.95),
+  leaf: [std(0x3a6440, 0.9), std(0x4b7446, 0.9), std(0x2e5638, 0.9), std(0x5d7d3e, 0.9)],
+  lamp: new THREE.MeshStandardMaterial({ color: 0xffe2a8, emissive: 0xffb764, emissiveIntensity: 2.4 }),
+  strip: new THREE.MeshStandardMaterial({ color: 0xffe9c2, emissive: 0xffc77a, emissiveIntensity: 1.6 }),
+  clay: std(0xa5603f, 0.95), line: std(0xf2ede4, 0.7), net: std(0x15191c, 0.8, 0, { transparent: true, opacity: 0.8 }),
+  green: std(0x4f8f3a, 0.95), greenWall: std(0x2f6b4a, 0.85),
+  fabric: std(0xb3a088, 0.95), velvet: std(0x6e2a3a, 0.75), rug: std(0x3f2c2c, 0.95),
+  white: std(0xf2ede4, 0.6), red: std(0xc23a32, 0.7), flower: [std(0xd98aa0), std(0xf0c75a), std(0xe9e1f0), std(0xc96a3a)],
+  water: std(0x2a7d8c, 0.08, 0.05, { normalMap: waterNormal, normalScale: new THREE.Vector2(0.35, 0.35), transparent: true, opacity: 0.9 }),
+  jet: std(0xe6f6ff, 0.1, 0, { transparent: true, opacity: 0.45, depthWrite: false, emissive: 0x334d55 }),
+  hill: [std(0x45624d, 1, 0, { flatShading: true }), std(0x55705a, 1, 0, { flatShading: true }), std(0x3a5444, 1, 0, { flatShading: true })]
+};
+
+// ============================================================================
+// Static world: batched geometry + collider registry
+// ============================================================================
+const G = {
+  box: new THREE.BoxGeometry(1, 1, 1), cyl: new THREE.CylinderGeometry(1, 1, 1, 18), cyl8: new THREE.CylinderGeometry(1, 1, 1, 8),
+  sph: new THREE.SphereGeometry(1, 16, 12), ico: new THREE.IcosahedronGeometry(1, 1), cone: new THREE.ConeGeometry(1, 1, 18),
+  disc: new THREE.CircleGeometry(1, 48).rotateX(-Math.PI / 2)
+};
+const staticGroups = new Map();
+const _o = new THREE.Object3D();
+function addStatic(geo, mat, x, y, z, sx = 1, sy = 1, sz = 1, o = {}) {
+  _o.position.set(x, y, z); _o.rotation.set(o.rx || 0, o.ry || 0, o.rz || 0); _o.scale.set(sx, sy, sz); _o.updateMatrix();
+  const g = geo.clone().applyMatrix4(_o.matrix);
+  if (o.uv) { const p = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) * o.uv, p.getZ(i) * o.uv); }
+  const shadow = o.shadow !== false, key = mat.uuid + (shadow ? '|s' : '|n');
+  if (!staticGroups.has(key)) staticGroups.set(key, { mat, shadow, list: [] });
+  staticGroups.get(key).list.push(g);
+}
+function flushStatic() {
+  for (const { mat, shadow, list } of staticGroups.values()) {
+    const geos = list.some(g => !g.index) ? list.map(g => g.index ? g.toNonIndexed() : g) : list;
+    const mesh = new THREE.Mesh(mergeGeometries(geos, false), mat);
+    mesh.castShadow = shadow; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false;
+    scene.add(mesh);
+  }
+  staticGroups.clear();
+}
+
+// Colliders are axis-aligned boxes or vertical cylinders. They drive player/robot collision,
+// walkable surfaces (step-up), the navigation grid and the static physics bodies.
+const colliders = [];
+function collBox(minX, maxX, minY, maxY, minZ, maxZ, o = {}) { colliders.push({ type: 'box', minX, maxX, minY, maxY, minZ, maxZ, phys: o.phys !== false, exact: !!o.exact }); }
+function collCyl(x, z, r, minY, maxY, o = {}) { colliders.push({ type: 'cyl', x, z, r, minY, maxY, phys: o.phys !== false }); }
+function box(mat, x, y, z, w, h, d, o = {}) {
+  addStatic(G.box, mat, x, y, z, w, h, d, o);
+  if (o.solid) collBox(x - w / 2, x + w / 2, y - h / 2, y + h / 2, z - d / 2, z + d / 2, o);
+}
+function cyl(mat, x, y, z, r, h, o = {}) {
+  addStatic(o.low ? G.cyl8 : G.cyl, mat, x, y, z, r, h, r, o);
+  if (o.solid) collCyl(x, z, r, y - h / 2, y + h / 2, o);
+}
+const inside = (c, x, z) => c.type === 'box' ? (x >= c.minX && x <= c.maxX && z >= c.minZ && z <= c.maxZ) : ((x - c.x) ** 2 + (z - c.z) ** 2 <= c.r * c.r);
+// Highest walkable top under (x,z) that is not above maxTop.
+function surfaceAt(x, z, maxTop) {
+  let h = 0;
+  for (const c of colliders) if (c.maxY <= maxTop && c.maxY > h && inside(c, x, z)) h = c.maxY;
+  return h;
+}
+// Highest top under (x,z) among colliders whose bottom is below y (used by arcs and ribbons).
+function topUnder(x, z, y) {
+  let h = 0;
+  for (const c of colliders) if (c.minY <= y && c.maxY > h && inside(c, x, z)) h = c.maxY;
+  return h;
+}
+const inBounds = (x, z, m = 0) => x > BOUNDS.x0 - m && x < BOUNDS.x1 + m && z > BOUNDS.z0 - m && z < BOUNDS.z1 + m;
+
+// ---------- Signs (canvas text, re-rendered on language change) ----------
+const signs = [];
+function fitFont(c, text, maxW, size, weight = 600, fam = UI_FONT) {
+  do { c.font = `${weight} ${size}px ${fam}`; size -= 2; } while (size > 12 && c.measureText(text).width > maxW);
+  return size + 2;
+}
+function rr(c, x, y, w, h, r) {
+  c.beginPath();
+  if (c.roundRect) c.roundRect(x, y, w, h, r);
+  else { c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+}
+function drawSign(s) {
+  const c = s.cv.getContext('2d'), W = s.cv.width, H = s.cv.height, text = t(s.key);
+  c.clearRect(0, 0, W, H);
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  if (s.style === 'neon') {
+    fitFont(c, text, W * 0.9, H * 0.55, 600, SERIF);
+    c.shadowColor = '#ffae45'; c.shadowBlur = H * 0.22; c.fillStyle = '#ffe6b0';
+    c.fillText(text, W / 2, H / 2); c.fillText(text, W / 2, H / 2);
+  } else {
+    rr(c, 4, 4, W - 8, H - 8, H * 0.16); c.fillStyle = 'rgba(16,26,30,.92)'; c.fill();
+    c.lineWidth = Math.max(3, H * 0.04); c.strokeStyle = '#cba66d'; c.stroke();
+    fitFont(c, text, W * 0.88, H * 0.46, 600, SERIF); c.fillStyle = '#f6ebd6'; c.fillText(text, W / 2, H / 2 + 2);
+  }
+  s.tex.needsUpdate = true;
+}
+function makeSign(key, x, y, z, w, h, o = {}) {
+  const pw = Math.round(Math.min(1024, w * 220)), cv = document.createElement('canvas');
+  cv.width = pw; cv.height = Math.round(pw * h / w);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = MAX_ANISO;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false, depthWrite: o.style !== 'neon' }));
+  mesh.position.set(x, y, z); mesh.rotation.y = o.ry || 0;
+  scene.add(mesh);
+  const s = { key, mesh, cv, tex, style: o.style, billboard: !!o.billboard };
+  signs.push(s); drawSign(s);
+  return s;
+}
+
+// ---------- World construction ----------
+const pathSegs = [];
+function path(x1, z1, x2, z2, w) {
+  const dx = x2 - x1, dz = z2 - z1, len = Math.hypot(dx, dz);
+  addStatic(G.box, M.pave, (x1 + x2) / 2, 0.012, (z1 + z2) / 2, w, 0.024, len, { ry: Math.atan2(dx, dz), uv: 0.5, shadow: false });
+  pathSegs.push({ x1, z1, x2, z2, w });
+}
+const lampSpots = [];
+function lamp(x, z) {
+  cyl(M.dark, x, 1.6, z, 0.06, 3.2, { low: true, solid: true, phys: true });
+  box(M.dark, x, 3.25, z, 0.3, 0.05, 0.3);
+  box(M.lamp, x, 3.05, z, 0.22, 0.34, 0.22, { shadow: false });
+  box(M.dark, x, 2.86, z, 0.28, 0.04, 0.28);
+  lampSpots.push([x, z]);
+}
+function signPost(key, x, y, z, w, h) {
+  for (const s of [-1, 1]) cyl(M.dark, x + s * (w / 2 - 0.15), y / 2, z - 0.04, 0.045, y + h / 2, { low: true, solid: true });
+  makeSign(key, x, y, z, w, h);
+}
+function bench(x, z, ry = 0) {
+  const along = Math.abs(Math.sin(ry)) > 0.5;
+  box(M.wood, x, 0.45, z, along ? 0.55 : 1.8, 0.08, along ? 1.8 : 0.55);
+  const bx = along ? -Math.sign(Math.sin(ry)) * 0.25 : 0, bz = along ? 0 : -Math.sign(Math.cos(ry)) * 0.25;
+  box(M.wood, x + bx, 0.75, z + bz, along ? 0.07 : 1.8, 0.5, along ? 1.8 : 0.07);
+  for (const s of [-0.7, 0.7]) box(M.dark, x + (along ? 0 : s), 0.22, z + (along ? s : 0), 0.08, 0.44, 0.45);
+  collBox(x - (along ? 0.3 : 0.9), x + (along ? 0.3 : 0.9), 0, 0.5, z - (along ? 0.9 : 0.3), z + (along ? 0.9 : 0.3));
+}
+function tree(x, z, s = 1, solid = true) {
+  cyl(M.trunk, x, 1.3 * s, z, 0.2 * s, 2.6 * s, { low: true });
+  if (solid) collCyl(x, z, 0.28 * s, 0, 3 * s);
+  const leaf = M.leaf[(rand() * M.leaf.length) | 0];
+  addStatic(G.ico, leaf, x, 3.2 * s, z, 1.7 * s, 1.5 * s, 1.7 * s);
+  addStatic(G.ico, leaf, x + 0.6 * s, 3.9 * s, z - 0.4 * s, 1.2 * s, 1.1 * s, 1.2 * s);
+  addStatic(G.ico, M.leaf[(rand() * M.leaf.length) | 0], x - 0.5 * s, 3.7 * s, z + 0.5 * s, 1.1 * s, 1 * s, 1.1 * s);
+}
+function planter(x, z) {
+  cyl(M.stone, x, 0.25, z, 0.55, 0.5, { solid: true });
+  addStatic(G.ico, M.hedge, x, 0.75, z, 0.55, 0.45, 0.55);
+  for (let j = 0; j < 3; j++) addStatic(G.sph, M.flower[(rand() * 4) | 0], x + Math.sin(j * 2.1) * 0.32, 1.02, z + Math.cos(j * 2.1) * 0.32, 0.11, 0.11, 0.11, { shadow: false });
+}
+
+function buildGroundAndPaths() {
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(700, 700).rotateX(-Math.PI / 2), M.grass);
+  ground.receiveShadow = true; scene.add(ground);
+  path(0, 40, 0, -13, 5);                 // main boulevard
+  addStatic(G.cyl, M.pave, 0, 0.015, -4, 9.6, 0.03, 9.6, { uv: 0.5, shadow: false }); // plaza
+  path(-8.5, -4, -21, -4, 3.5); path(8.5, -4, 20, -4, 3.5);
+  path(0, -12, 0, -21, 4); path(5, -11, 30, -21.5, 3); path(-5, -11, -25.5, -26.8, 3);
+  path(2.5, 25, 26, 25, 3); path(-2.5, 31, -8, 31, 2.5); path(2.5, 31, 8, 31, 2.5);
+}
+
+function buildPerimeter() {
+  const H = 1.5;
+  box(M.hedge, 1, H / 2, -51.9, 99, H, 0.9, { solid: true });
+  box(M.hedge, -47.9, H / 2, -7.75, 0.9, H, 88.3, { solid: true });
+  box(M.hedge, 49.9, H / 2, -7.75, 0.9, H, 88.3, { solid: true });
+  box(M.hedge, -25.9, H / 2, 36.4, 44.1, H, 0.9, { solid: true });
+  box(M.hedge, 27, H / 2, 36.4, 46.1, H, 0.9, { solid: true });
+  // entrance gate
+  for (const s of [-1, 1]) {
+    box(M.stone, s * 3.4, 2.1, 36.4, 0.9, 4.2, 0.9, { solid: true });
+    box(M.gold, s * 3.4, 4.25, 36.4, 1.0, 0.1, 1.0);
+    addStatic(G.sph, M.lamp, s * 3.4, 4.5, 36.4, 0.18, 0.18, 0.18, { shadow: false });
+  }
+  box(M.roof, 0, 4.0, 36.4, 7.8, 0.45, 0.7);
+  makeSign('welcomeSign', 0, 3.25, 36.78, 5.6, 0.85);
+  makeSign('welcomeSign', 0, 3.25, 36.02, 5.6, 0.85, { ry: Math.PI });
+}
+
+function buildReception() {
+  // platform with steps (walkable, raises the floor 20 cm)
+  box(M.stone, 0, 0.1, 18.1, 17, 0.2, 10.2, { solid: true });
+  box(M.stone, 0, 0.05, 23.5, 9, 0.1, 0.6, { solid: true });
+  box(M.stone, 0, 0.05, 12.7, 9, 0.1, 0.6, { solid: true });
+  box(M.rug, 0, 0.205, 18.5, 4.2, 0.01, 8, { shadow: false });
+  for (const x of [-8, -4.6, 4.6, 8]) for (const z of [13.5, 22.7]) {
+    cyl(M.cream, x, 2.3, z, 0.26, 4.2, { solid: true });
+    box(M.gold, x, 0.32, z, 0.62, 0.24, 0.62);
+  }
+  for (const s of [-1, 1]) {
+    box(M.wall, s * 8, 2.1, 18.1, 0.3, 3.8, 9.2, { solid: true });
+    for (const z of [15.4, 18.1, 20.8]) box(M.glass, s * 8.17, 2.3, z, 0.04, 2.2, 1.8, { shadow: false });
+  }
+  box(M.roof, 0, 4.55, 18.1, 18, 0.35, 11.2);
+  box(M.gold, 0, 4.32, 23.65, 18, 0.12, 0.1);
+  box(M.strip, 0, 4.35, 18.1, 0.25, 0.04, 9, { shadow: false });
+  // desk
+  box(M.woodLight, -3.2, 0.725, 18, 4.2, 1.05, 0.8, { solid: true });
+  box(M.cream, -3.2, 1.27, 18.02, 4.4, 0.06, 0.95);
+  box(M.gold, -3.2, 0.9, 18.42, 4.2, 0.05, 0.02);
+  makeSign('receptionSign', -3.2, 2.85, 15.8, 2.2, 0.5);
+  makeSign('welcomeSign', 0, 3.75, 23.25, 6.5, 0.85);
+  // lounge corner
+  box(M.fabric, 5.6, 0.42, 15.3, 2.6, 0.45, 0.9, { solid: true });
+  box(M.fabric, 5.6, 0.85, 14.9, 2.6, 0.5, 0.2);
+  box(M.wood, 5.6, 0.45, 16.9, 1.4, 0.06, 0.7, { solid: true });
+  box(M.fabric, 5.6, 0.42, 18.6, 2.6, 0.45, 0.9, { solid: true });
+  box(M.fabric, 5.6, 0.85, 19.0, 2.6, 0.5, 0.2);
+  planter(-6.8, 21.6); planter(6.8, 21.6); planter(-6.8, 14.6);
+  const light = new THREE.PointLight(0xffd29a, 6, 13, 1.6); light.position.set(0, 3.6, 18); scene.add(light);
+}
+
+function kiosk(cx, cz, w, d, h, face, key) {
+  box(M.wall, cx, h / 2, cz, w, h, d, { solid: true });
+  box(M.roof, cx, h + 0.15, cz, w + 0.8, 0.3, d + 0.8);
+  const fx = cx + face * (w / 2 + 0.03);
+  for (const dz of [-1.5, 1.5]) box(M.glass, fx, 1.6, cz + dz, 0.04, 1.6, 1.2, { shadow: false });
+  box(M.dark, fx, 1.1, cz, 0.06, 2.2, 1.1);
+  box(M.gold, fx + face * 0.02, 2.25, cz, 0.04, 0.08, 1.3);
+  makeSign(key, cx + face * (w / 2 + 0.07), h - 0.6, cz, 3.2, 0.7, { ry: face > 0 ? Math.PI / 2 : -Math.PI / 2 });
+}
+
+function buildRestaurant() {
+  const cx = -27, cz = -4, w = 12, d = 16, h = 5;
+  box(M.wall, cx, h / 2, cz, w, h, d, { solid: true });
+  box(M.roof, cx, h + 0.2, cz, w + 1, 0.4, d + 1);
+  const fx = cx + w / 2 + 0.03;
+  for (const z of [-10, -7.2, 0, 2.8]) { box(M.glass, fx, 2.2, z, 0.04, 2.6, 2.2, { shadow: false }); box(M.gold, fx + 0.03, 2.2, z - 1.15, 0.05, 2.7, 0.08); }
+  box(M.dark, fx, 1.3, cz, 0.06, 2.6, 2.2);
+  box(M.red, fx + 0.9, 3.0, cz, 1.8, 0.08, 3.2);
+  makeSign('restSign', fx + 0.08, 4.25, cz, 5.4, 0.8, { ry: Math.PI / 2 });
+  for (const [x, z] of [[-18, -8.6], [-15, -8.6], [-18, 0.6], [-15, 0.6]]) {
+    cyl(M.white, x, 0.74, z, 0.5, 0.05, { solid: true });
+    cyl(M.dark, x, 0.37, z, 0.05, 0.72, { low: true });
+    for (const a of [0, Math.PI]) box(M.woodLight, x + Math.cos(a) * 0.8, 0.45, z, 0.45, 0.06, 0.45);
+    cyl(M.dark, x, 1.5, z, 0.03, 1.5, { low: true });
+    addStatic(G.cone, M.cream, x, 2.35, z, 1.2, 0.5, 1.2);
+  }
+}
+
+function buildVipLounge() {
+  box(M.stoneDark, 27, 0.15, -4, 14.8, 0.3, 12.8, { solid: true });
+  box(M.stoneDark, 19.3, 0.075, -4, 0.6, 0.15, 6, { solid: true });
+  box(M.rug, 24.5, 0.305, -4, 6, 0.01, 7, { shadow: false });
+  box(M.glass, 34, 1.9, -4, 0.12, 3.2, 12.4, { solid: true, shadow: false });
+  for (const z of [-10, 2]) box(M.glass, 27.2, 1.9, z, 13.6, 3.2, 0.12, { solid: true, shadow: false });
+  for (const z of [-9.8, 1.8]) for (const x of [20.2, 33.8]) cyl(M.gold, x, 1.9, z, 0.14, 3.2, { solid: true });
+  box(M.roof, 27, 3.65, -4, 15.4, 0.3, 13.4);
+  box(M.gold, 19.35, 3.45, -4, 0.1, 0.14, 13.4);
+  for (const z of [-7, -4, -1]) box(M.strip, 27, 3.48, z, 12, 0.04, 0.12, { shadow: false });
+  // bar
+  box(M.wood, 31.4, 0.85, -4, 1.0, 1.1, 6, { solid: true });
+  box(M.cream, 31.35, 1.43, -4, 1.2, 0.06, 6.2);
+  box(M.gold, 30.88, 0.6, -4, 0.02, 0.06, 6);
+  box(M.wood, 33.7, 1.7, -4, 0.4, 2.4, 5, { shadow: false });
+  for (let i = 0; i < 14; i++) cyl(M.flower[i % 4], 33.6, 1.35 + (i % 2) * 0.6, -6.2 + (i >> 1) * 0.62, 0.05, 0.3, { low: true, shadow: false });
+  makeSign('conciergeSign', 31.0, 2.75, -4, 2.6, 0.5, { ry: -Math.PI / 2 });
+  makeSign('vipSign', 19.25, 3.0, -4, 4.4, 0.75, { ry: -Math.PI / 2, style: 'neon' });
+  // seating
+  for (const [z, dir] of [[-8.4, 1], [0.4, -1]]) {
+    box(M.velvet, 23.6, 0.55, z, 3, 0.5, 0.95, { solid: true });
+    box(M.velvet, 23.6, 1.0, z - dir * 0.4, 3, 0.55, 0.2);
+    box(M.wood, 23.6, 0.55, z + dir * 1.6, 1.5, 0.06, 0.8, { solid: true });
+    box(M.gold, 23.6, 0.4, z + dir * 1.6, 0.06, 0.25, 0.06);
+  }
+  for (const z of [-5.6, -2.4]) { box(M.velvet, 21.4, 0.55, z, 0.9, 0.5, 0.9, { solid: true }); box(M.velvet, 21.05, 0.95, z, 0.2, 0.5, 0.9); }
+  planter(21.2, -9.2); planter(21.2, 1.2);
+  const light = new THREE.PointLight(0xffcb8a, 8, 15, 1.6); light.position.set(27, 3.1, -4); scene.add(light);
+}
+
+function buildRegular() {
+  const cx = 31, cz = 25;
+  box(M.wall, cx, 2, cz, 10, 4, 8, { solid: true });
+  box(M.roof, cx, 4.15, cz, 10.8, 0.3, 8.8);
+  for (const z of [22.6, 27.4]) box(M.glass, 25.97, 1.7, z, 0.04, 1.6, 1.8, { shadow: false });
+  box(M.dark, 25.96, 1.1, cz, 0.06, 2.2, 1.2);
+  makeSign('regularSign', 25.9, 3.35, cz, 3.6, 0.7, { ry: -Math.PI / 2 });
+  bench(22, 22.4); bench(22, 27.6, Math.PI);
+}
+
+const fountain = { jets: [], basin: null };
+function buildPlaza() {
+  cyl(M.stone, 0, 0.28, -4, 2.6, 0.56, { solid: true });
+  addStatic(G.disc, M.water, 0, 0.5, -4, 2.42, 1, 2.42, { shadow: false });
+  cyl(M.stone, 0, 0.9, -4, 0.38, 1.3, { solid: true });
+  cyl(M.stone, 0, 1.58, -4, 1.0, 0.16);
+  addStatic(G.disc, M.water, 0, 1.67, -4, 0.92, 1, 0.92, { shadow: false });
+  cyl(M.gold, 0, 1.75, -4, 0.12, 0.3);
+  const main = new THREE.Mesh(new THREE.ConeGeometry(0.1, 1.4, 12, 1, true), M.jet);
+  main.position.set(0, 2.55, -4); scene.add(main); fountain.jets.push({ mesh: main, base: 1, phase: 0 });
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * TAU, m = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.05, 1.1, 6, 1, true), M.jet);
+    m.position.set(Math.cos(a) * 1.5, 0.95, -4 + Math.sin(a) * 1.5);
+    m.rotation.set(Math.sin(a) * 0.45, 0, -Math.cos(a) * 0.45);
+    scene.add(m); fountain.jets.push({ mesh: m, base: 1, phase: i });
+  }
+  for (const a of [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4]) {
+    const x = Math.cos(a) * 6.8, z = -4 + Math.sin(a) * 6.8;
+    addStatic(G.box, M.wood, x, 0.45, z, 1.8, 0.08, 0.55, { ry: -a + Math.PI / 2 });
+    addStatic(G.box, M.wood, x + Math.cos(a) * 0.25, 0.75, z + Math.sin(a) * 0.25, 1.8, 0.5, 0.07, { ry: -a + Math.PI / 2 });
+    collCyl(x, z, 0.9, 0, 0.5);
+  }
+  for (let i = 0; i < 8; i++) { const a = (i + 0.5) / 8 * TAU; lamp(Math.cos(a) * 9.1, -4 + Math.sin(a) * 9.1); }
+  signPost('gardensSign', -4.6, 2.5, -20.6, 4.6, 0.75);
+}
+
+function buildGardens() {
+  box(M.pave, 0, 0.015, -29.5, 16, 0.03, 14, { uv: 0.5, shadow: false });
+  cyl(M.stone, 0, 0.25, -30, 5.4, 0.5, { solid: true });
+  addStatic(G.disc, M.water, 0, 0.46, -30, 5.15, 1, 5.15, { shadow: false });
+  for (const x of [-7, 7]) for (const z of [-33, -29, -25]) {
+    box(M.white, x, 0.28, z, 0.75, 0.12, 1.9, { solid: true });
+    box(M.white, x, 0.5, z - 0.8, 0.75, 0.4, 0.3);
+  }
+  for (const x of [-7, 7]) { cyl(M.dark, x, 1.3, -35.3, 0.04, 2.6, { low: true, solid: true }); addStatic(G.cone, M.cream, x, 2.6, -35.3, 1.6, 0.6, 1.6); }
+  for (const s of [-1, 1]) { box(M.hedge, s * 9.6, 0.45, -29.5, 0.8, 0.9, 13, { solid: true }); for (let z = -35; z <= -24; z += 2.2) planter(s * 11.2, z); }
+  box(M.hedge, 0, 0.45, -37.4, 18, 0.9, 0.8, { solid: true });
+  for (let i = 0; i < 40; i++) addStatic(G.sph, M.flower[i % 4], (rand() - 0.5) * 16, 0.95, -37.4 + (rand() - 0.5) * 0.5, 0.13, 0.13, 0.13, { shadow: false });
+}
+
+const golf = { hole: new THREE.Vector3(-26, 0, -37.1), strokes: 0, lastStroke: 0 };
+function buildMinigolf() {
+  box(M.green, -26, 0.003, -33.5, 3, 0.006, 9, { shadow: false });
+  const border = (vx, vz, vw, vd, px, pz, pw, pd) => { box(M.wood, vx, 0.06, vz, vw, 0.12, vd); collBox(px - pw / 2, px + pw / 2, 0, 0.12, pz - pd / 2, pz + pd / 2, { exact: true }); };
+  border(-27.55, -33.5, 0.1, 9.2, -27.7, -33.5, 0.4, 9.6);
+  border(-24.45, -33.5, 0.1, 9.2, -24.3, -33.5, 0.4, 9.6);
+  border(-26, -38.05, 3.2, 0.1, -26, -38.2, 3.6, 0.4);
+  border(-26, -28.95, 3.2, 0.1, -26, -28.8, 3.6, 0.4);
+  box(M.wood, -25.55, 0.06, -33.5, 1.9, 0.12, 0.2, { solid: true, exact: true });
+  addStatic(G.disc, M.dark, golf.hole.x, 0.008, golf.hole.z, 0.06, 1, 0.06, { shadow: false });
+  cyl(M.white, golf.hole.x, 0.6, golf.hole.z, 0.007, 1.2, { low: true });
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.2), new THREE.MeshStandardMaterial({ color: 0xc23a32, side: THREE.DoubleSide }));
+  flag.position.set(golf.hole.x + 0.16, 1.08, golf.hole.z); scene.add(flag); golf.flag = flag;
+  box(M.hedge, -26, 0.004, -29.8, 0.3, 0.008, 0.3, { shadow: false });
+  box(M.woodLight, -23.3, 0.72, -29.4, 1.1, 0.06, 0.6, { solid: true });
+  for (const [dx, dz] of [[-0.45, -0.22], [0.45, -0.22], [-0.45, 0.22], [0.45, 0.22]]) box(M.dark, -23.3 + dx, 0.35, -29.4 + dz, 0.05, 0.7, 0.05);
+  collBox(-23.85, -22.75, 0, 0.75, -29.7, -29.1);
+  signPost('golfSign', -26, 2.3, -27.6, 2.6, 0.55);
+}
+
+function buildTennis() {
+  box(M.clay, 30, 0.01, -33, 9, 0.02, 19, { uv: 0.25, shadow: false });
+  const L = (x, z, w, d) => box(M.line, x, 0.022, z, w, 0.004, d, { shadow: false });
+  L(26.2, -33, 0.06, 17.6); L(33.8, -33, 0.06, 17.6); L(30, -24.2, 7.66, 0.06); L(30, -41.8, 7.66, 0.06);
+  L(30, -28.7, 7.6, 0.05); L(30, -37.3, 7.6, 0.05); L(30, -33, 0.05, 8.6);
+  for (const x of [25.7, 34.3]) cyl(M.dark, x, 0.53, -33, 0.04, 1.07, { low: true, solid: true });
+  box(M.net, 30, 0.46, -33, 8.6, 0.88, 0.03, { solid: true });
+  box(M.white, 30, 0.91, -33, 8.6, 0.05, 0.05);
+  box(M.greenWall, 39.6, 1.5, -31, 0.4, 3, 7, { solid: true });
+  box(M.white, 39.39, 0.9, -31, 0.02, 0.05, 7, { shadow: false });
+  makeSign('wallSign', 39.38, 2.6, -31, 2.4, 0.5, { ry: -Math.PI / 2 });
+  signPost('fieldsSign', 30, 2.4, -22.7, 3.8, 0.7);
+  bench(36.6, -27);
+  // ball basket (exact thin walls so balls rest inside)
+  const bx = 36.6, bz = -24.8, s = 0.25, wt = 0.025, bh = 0.4;
+  for (const [x, z, w, d] of [[bx - s, bz, wt, 2 * s], [bx + s, bz, wt, 2 * s], [bx, bz - s, 2 * s, wt], [bx, bz + s, 2 * s, wt]]) box(M.dark, x, bh / 2, z, w, bh, d, { solid: true, exact: true });
+  box(M.dark, bx, 0.01, bz, 2 * s, 0.02, 2 * s);
+}
+
+function buildTreesAndLamps() {
+  for (const z of [34, 28, 9]) { for (const x of [-6, 6]) tree(x, z, 0.95); lamp(-3.1, z); lamp(3.1, z); }
+  for (let x = 11; x <= 18; x += 5) { lamp(x, -6.1); lamp(-x, -6.1); }
+  // keep-clear zones for random trees
+  const clear = [[-9, 9, 11, 25], [-15, 15, -15, 7], [17, 37, -12, 4], [-35, -14, -14, 6], [24, 38, 19, 31], [-11, 11, -39, -19],
+    [23, 42, -45, -19], [-31, -20, -40, -24], [-16, 16, 27, 36]];
+  const nearPath = (x, z) => pathSegs.some(p => {
+    const dx = p.x2 - p.x1, dz = p.z2 - p.z1, l2 = dx * dx + dz * dz, k = clamp(((x - p.x1) * dx + (z - p.z1) * dz) / l2, 0, 1);
+    return Math.hypot(x - (p.x1 + dx * k), z - (p.z1 + dz * k)) < p.w / 2 + 2;
+  });
+  let placed = 0;
+  for (let i = 0; i < 1400 && placed < 110; i++) {
+    const x = lerp(BOUNDS.x0 + 2, BOUNDS.x1 - 2, rand()), z = lerp(BOUNDS.z0 + 2, BOUNDS.z1 - 2, rand());
+    if (clear.some(([a, b, c, d]) => x > a && x < b && z > c && z < d) || nearPath(x, z)) continue;
+    if (colliders.some(c => c.type === 'box' ? (x > c.minX - 2.5 && x < c.maxX + 2.5 && z > c.minZ - 2.5 && z < c.maxZ + 2.5) : Math.hypot(x - c.x, z - c.z) < c.r + 2.5)) continue;
+    tree(x, z, 0.85 + rand() * 0.45); placed++;
+  }
+  // scenery beyond the hedge: forest ring, lake and hills (no collisions needed)
+  for (let i = 0; i < 160; i++) {
+    const a = rand() * TAU, r = 70 + rand() * 60, x = 1 + Math.cos(a) * r * 1.1, z = -8 + Math.sin(a) * r;
+    if (Math.hypot(x + 74, z + 8) < 24) continue;
+    tree(x, z, 1 + rand() * 0.8, false);
+  }
+  addStatic(G.disc, M.water, -74, 0.03, -8, 26, 1, 15, { shadow: false });
+  for (let i = 0; i < 40; i++) { const a = i / 40 * TAU; addStatic(G.ico, M.stone, -74 + Math.cos(a) * 26.3, 0.1, -8 + Math.sin(a) * 15.3, 0.4, 0.25, 0.4); }
+  for (let i = 0; i < 16; i++) {
+    const a = i / 16 * TAU + rand() * 0.2, r = 190 + rand() * 80;
+    addStatic(G.cone, M.hill[i % 3], Math.cos(a) * r, 0, Math.sin(a) * r, 50 + rand() * 50, 16 + rand() * 22, 50 + rand() * 50, { shadow: false });
+  }
+}
+
+buildGroundAndPaths();
+buildPerimeter();
+buildReception();
+kiosk(-11, 31, 6, 5, 3.6, 1, 'infoSign');
+kiosk(11, 31, 6, 5, 3.6, -1, 'bathSign');
+buildRestaurant();
+buildVipLounge();
+buildRegular();
+buildPlaza();
+buildGardens();
+buildMinigolf();
+buildTennis();
+buildTreesAndLamps();
+flushStatic();
+
+// ============================================================================
+// Navigation grid + A* (robots and the guided route share it)
+// ============================================================================
+const NAV = { x0: -48, z0: -52, s: 0.5 };
+NAV.nx = Math.round((50 - NAV.x0) / NAV.s) + 1;
+NAV.nz = Math.round((37 - NAV.z0) / NAV.s) + 1;
+NAV.g = new Uint8Array(NAV.nx * NAV.nz);
+(function buildNav() {
+  const { x0, z0, s, nx, nz, g } = NAV, R = 0.42;
+  for (const c of colliders) {
+    if (!(c.maxY >= 0.45 && c.minY < 1.9)) continue;
+    const bx0 = c.type === 'box' ? c.minX : c.x - c.r, bx1 = c.type === 'box' ? c.maxX : c.x + c.r;
+    const bz0 = c.type === 'box' ? c.minZ : c.z - c.r, bz1 = c.type === 'box' ? c.maxZ : c.z + c.r;
+    const i0 = Math.max(0, Math.ceil((bx0 - R - x0) / s)), i1 = Math.min(nx - 1, Math.floor((bx1 + R - x0) / s));
+    const j0 = Math.max(0, Math.ceil((bz0 - R - z0) / s)), j1 = Math.min(nz - 1, Math.floor((bz1 + R - z0) / s));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+      const px = x0 + i * s, pz = z0 + j * s;
+      if (c.type === 'cyl' && Math.hypot(px - c.x, pz - c.z) > c.r + R) continue;
+      g[i + j * nx] = 1;
+    }
+  }
+})();
+class Heap {
+  constructor() { this.n = []; this.f = []; }
+  get size() { return this.n.length; }
+  push(n, f) {
+    const a = this.n, b = this.f; let i = a.length; a.push(n); b.push(f);
+    while (i > 0) { const p = (i - 1) >> 1; if (b[p] <= f) break; a[i] = a[p]; b[i] = b[p]; i = p; }
+    a[i] = n; b[i] = f;
+  }
+  pop() {
+    const a = this.n, b = this.f, top = a[0], ln = a.pop(), lf = b.pop();
+    if (a.length) {
+      let i = 0; const L = a.length;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1; let m = i, mf = lf;
+        if (l < L && b[l] < mf) { m = l; mf = b[l]; }
+        if (r < L && b[r] < mf) m = r;
+        if (m === i) break;
+        a[i] = a[m]; b[i] = b[m]; i = m;
+      }
+      a[i] = ln; b[i] = lf;
+    }
+    return top;
+  }
+}
+const navCell = (x, z) => [Math.round((x - NAV.x0) / NAV.s), Math.round((z - NAV.z0) / NAV.s)];
+const navFree = (i, j) => i >= 0 && j >= 0 && i < NAV.nx && j < NAV.nz && !NAV.g[i + j * NAV.nx];
+function nearestFree(i, j) {
+  if (navFree(i, j)) return i + j * NAV.nx;
+  for (let r = 1; r <= 8; r++) for (let di = -r; di <= r; di++) for (let dj = -r; dj <= r; dj++) {
+    if (Math.max(Math.abs(di), Math.abs(dj)) !== r) continue;
+    if (navFree(i + di, j + dj)) return i + di + (j + dj) * NAV.nx;
+  }
+  return -1;
+}
+function lineFree(a, b) {
+  const d = Math.hypot(b.x - a.x, b.z - a.z), n = Math.ceil(d / (NAV.s * 0.5));
+  for (let k = 1; k < n; k++) { const [i, j] = navCell(lerp(a.x, b.x, k / n), lerp(a.z, b.z, k / n)); if (!navFree(i, j)) return false; }
+  return true;
+}
+function findPath(sx, sz, gx, gz) {
+  const { nx, nz, s, x0, z0, g } = NAV;
+  const start = nearestFree(...navCell(sx, sz)), goal = nearestFree(...navCell(gx, gz));
+  if (start < 0 || goal < 0) return null;
+  const N = nx * nz, cost = new Float32Array(N).fill(Infinity), came = new Int32Array(N).fill(-1), closed = new Uint8Array(N);
+  const gi = goal % nx, gj = (goal / nx) | 0, SQ2 = Math.SQRT2;
+  const h = n => { const dx = Math.abs(n % nx - gi), dz = Math.abs(((n / nx) | 0) - gj); return dx + dz + (SQ2 - 2) * Math.min(dx, dz); };
+  const heap = new Heap(); cost[start] = 0; heap.push(start, h(start));
+  const DIRS = [[1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1], [1, 1, SQ2], [1, -1, SQ2], [-1, 1, SQ2], [-1, -1, SQ2]];
+  let found = start === goal;
+  while (heap.size && !found) {
+    const cur = heap.pop();
+    if (closed[cur]) continue;
+    if (cur === goal) { found = true; break; }
+    closed[cur] = 1;
+    const ci = cur % nx, cj = (cur / nx) | 0;
+    for (const [di, dj, w] of DIRS) {
+      const i = ci + di, j = cj + dj;
+      if (i < 0 || j < 0 || i >= nx || j >= nz) continue;
+      const n = i + j * nx;
+      if (g[n] || closed[n]) continue;
+      if (di && dj && (g[ci + di + cj * nx] || g[ci + (cj + dj) * nx])) continue;
+      const c = cost[cur] + w;
+      if (c < cost[n]) { cost[n] = c; came[n] = cur; heap.push(n, c + h(n)); }
+    }
+  }
+  if (!found) return null;
+  const cells = [];
+  for (let n = goal; n !== -1; n = came[n]) { cells.push(n); if (n === start) break; }
+  cells.reverse();
+  const pts = cells.map(n => ({ x: x0 + (n % nx) * s, z: z0 + ((n / nx) | 0) * s }));
+  pts[0] = { x: sx, z: sz };
+  const [ggi, ggj] = navCell(gx, gz);
+  if (goal === ggi + ggj * nx) pts.push({ x: gx, z: gz });
+  if (pts.length === 1) pts.push({ x: gx, z: gz });
+  const out = [pts[0]];
+  let i = 0;
+  while (i < pts.length - 1) {
+    let j = i + 1;
+    while (j + 1 < pts.length && lineFree(pts[i], pts[j + 1])) j++;
+    out.push(pts[j]); i = j;
+  }
+  return out;
+}
+const pathLen = p => { let s = 0; for (let i = 1; i < p.length; i++) s += Math.hypot(p[i].x - p[i - 1].x, p[i].z - p[i - 1].z); return s; };
+function closestOnPath(p, x, z) {
+  let best = { s: 0, d: Infinity }, acc = 0;
+  for (let i = 1; i < p.length; i++) {
+    const a = p[i - 1], b = p[i], dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz) || 1e-6;
+    const k = clamp(((x - a.x) * dx + (z - a.z) * dz) / (l * l), 0, 1), d = Math.hypot(x - (a.x + dx * k), z - (a.z + dz * k));
+    if (d < best.d) best = { s: acc + k * l, d };
+    acc += l;
+  }
+  return best;
+}
+function pointAt(p, s) {
+  let acc = 0;
+  for (let i = 1; i < p.length; i++) {
+    const a = p[i - 1], b = p[i], l = Math.hypot(b.x - a.x, b.z - a.z);
+    if (acc + l >= s) { const k = l ? (s - acc) / l : 0; return { x: lerp(a.x, b.x, k), z: lerp(a.z, b.z, k) }; }
+    acc += l;
+  }
+  return { ...p[p.length - 1] };
+}
+
+// ============================================================================
+// Physics (cannon-es): static colliders + grabbable dynamic objects
+// ============================================================================
+const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.81, 0) });
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
+world.solver.iterations = 8;
+const PM = { ground: new CANNON.Material('ground'), ball: new CANNON.Material('ball'), golf: new CANNON.Material('golf'), obj: new CANNON.Material('obj'), putter: new CANNON.Material('putter') };
+world.defaultContactMaterial.friction = 0.4;
+world.defaultContactMaterial.restitution = 0.2;
+const contact = (a, b, friction, restitution) => world.addContactMaterial(new CANNON.ContactMaterial(a, b, { friction, restitution }));
+contact(PM.ball, PM.ground, 0.5, 0.72); contact(PM.ball, PM.ball, 0.3, 0.8); contact(PM.ball, PM.putter, 0.3, 0.6);
+contact(PM.golf, PM.ground, 0.25, 0.35); contact(PM.golf, PM.putter, 0.2, 0.55); contact(PM.golf, PM.golf, 0.1, 0.8);
+contact(PM.obj, PM.ground, 0.6, 0.12);
+{
+  const ground = new CANNON.Body({ type: CANNON.Body.STATIC, material: PM.ground, shape: new CANNON.Plane() });
+  ground.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+  world.addBody(ground);
+  for (const c of colliders) {
+    if (!c.phys) continue;
+    const b = new CANNON.Body({ type: CANNON.Body.STATIC, material: PM.ground });
+    if (c.type === 'box') {
+      let hx = (c.maxX - c.minX) / 2, hy = (c.maxY - c.minY) / 2, hz = (c.maxZ - c.minZ) / 2, cy = (c.minY + c.maxY) / 2;
+      if (!c.exact) { hx = Math.max(hx, 0.15); hz = Math.max(hz, 0.15); if (hy < 0.15) { hy = 0.15; cy = c.maxY - 0.15; } } // thicker bodies avoid tunnelling
+      b.addShape(new CANNON.Box(new CANNON.Vec3(hx, hy, hz)));
+      b.position.set((c.minX + c.maxX) / 2, cy, (c.minZ + c.maxZ) / 2);
+    } else {
+      b.addShape(new CANNON.Cylinder(c.r, c.r, c.maxY - c.minY, 12));
+      b.position.set(c.x, (c.minY + c.maxY) / 2, c.z);
+    }
+    world.addBody(b);
+  }
+}
+
+const items = [];
+const pickables = [];
+function addItem(def) {
+  const body = new CANNON.Body({ mass: def.mass, material: def.mat || PM.obj, linearDamping: def.lin ?? 0.05, angularDamping: def.ang ?? 0.1, allowSleep: true, sleepSpeedLimit: 0.12, sleepTimeLimit: 0.8 });
+  for (const [shape, off] of def.shapes) body.addShape(shape, off);
+  body.position.set(...def.pos);
+  if (def.rot) body.quaternion.setFromEuler(...def.rot);
+  world.addBody(body);
+  const mats = [];
+  def.object.traverse(o => {
+    if (!o.isMesh) return;
+    o.castShadow = true;
+    if (o.material.emissive) { o.material = o.material.clone(); o.material.userData.e0 = o.material.emissive.getHex(); mats.push(o.material); }
+  });
+  scene.add(def.object);
+  const item = { ...def, body, mats, home: { pos: body.position.clone(), quat: body.quaternion.clone() }, held: null, hl: false, pull: 1,
+    vel: new THREE.Vector3(), angVel: new THREE.Vector3(), prevPos: new THREE.Vector3(), prevQuat: new THREE.Quaternion(), lastSound: 0, lastKick: 0, sinking: 0 };
+  def.object.traverse(o => { o.userData.item = item; });
+  body.addEventListener('collide', e => {
+    const v = Math.abs(e.contact.getImpactVelocityAlongNormal()), now = performance.now();
+    if (v > 0.7 && now - item.lastSound > 90) { item.lastSound = now; sfx.bounce(v, item.kind); }
+    item.onCollide?.(e);
+  });
+  syncItem(item);
+  items.push(item); pickables.push(def.object);
+  return item;
+}
+function removeItem(item) {
+  world.removeBody(item.body); scene.remove(item.object);
+  items.splice(items.indexOf(item), 1); pickables.splice(pickables.indexOf(item.object), 1);
+}
+function respawn(item) {
+  const b = item.body;
+  b.type = CANNON.Body.DYNAMIC;
+  b.position.copy(item.home.pos); b.quaternion.copy(item.home.quat);
+  b.velocity.setZero(); b.angularVelocity.setZero(); b.wakeUp();
+  item.sinking = 0; syncItem(item);
+}
+function syncItem(item) {
+  item.object.position.copy(item.body.interpolatedPosition.length() ? item.body.interpolatedPosition : item.body.position);
+  item.object.quaternion.copy(item.body.interpolatedQuaternion);
+}
+function setHL(item, on) {
+  if (item.hl === on) return;
+  item.hl = on;
+  for (const m of item.mats) m.emissive.setHex(on ? 0x6a4614 : m.userData.e0);
+}
+
+function tennisBall(x, y, z) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.034, 16, 12), std(0xd6ef4a, 0.9));
+  return addItem({ kind: 'ball', object: m, shapes: [[new CANNON.Sphere(0.034)]], mass: 0.058, mat: PM.ball, pos: [x, y, z], lin: 0.04, ang: 0.1, radius: 0.034 });
+}
+function beachBall(x, y, z) {
+  const tex = canvasTex(256, 128, (c, w, h) => { const cols = ['#e94b3c', '#f7f3ea', '#2f8fd8', '#f7f3ea', '#f2c13a', '#f7f3ea']; cols.forEach((col, i) => { c.fillStyle = col; c.fillRect(i * w / 6, 0, w / 6 + 1, h); }); });
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 16), std(0xffffff, 0.45, 0, { map: tex }));
+  return addItem({ kind: 'ball', object: m, shapes: [[new CANNON.Sphere(0.28)]], mass: 0.15, mat: PM.ball, pos: [x, y, z], lin: 0.25, ang: 0.25, radius: 0.28 });
+}
+function golfBall(x, y, z) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.021, 14, 10), std(0xf6f6f2, 0.35));
+  return addItem({ kind: 'golf', object: m, shapes: [[new CANNON.Sphere(0.021)]], mass: 0.046, mat: PM.golf, pos: [x, y, z], lin: 0.45, ang: 0.55, radius: 0.021 });
+}
+const PUTTER_COM = 0.6;
+function putter(x, y, z) {
+  const g = new THREE.Group(), metal = std(0xc9ccd1, 0.25, 0.9);
+  // the body origin is the centre of mass (PUTTER_COM below the grip), so it rests and tumbles believably
+  const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.014, 0.22, 10), std(0x1b1f24, 0.8)); grip.position.y = PUTTER_COM - 0.1; g.add(grip);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.68, 8), metal); shaft.position.y = PUTTER_COM - 0.53; g.add(shaft);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.035, 0.045), metal); head.position.y = PUTTER_COM - 0.875; g.add(head);
+  const mark = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.036, 0.046), std(0xffffff, 0.5)); mark.position.y = PUTTER_COM - 0.875; g.add(mark);
+  return addItem({ kind: 'putter', object: g, mass: 0.45, mat: PM.putter, pos: [x, y, z], rot: [0, 0, Math.PI / 2], lin: 0.1, ang: 0.3, radius: 0.05,
+    shapes: [[new CANNON.Cylinder(0.016, 0.016, 0.85, 8), new CANNON.Vec3(0, PUTTER_COM - 0.43, 0)], [new CANNON.Box(new CANNON.Vec3(0.055, 0.0175, 0.0225)), new CANNON.Vec3(0, PUTTER_COM - 0.875, 0)]],
+    gripRot: new THREE.Matrix4().makeRotationX(Math.PI / 2).multiply(new THREE.Matrix4().makeTranslation(0, -PUTTER_COM, 0)),
+    onCollide(e) {
+      const other = items.find(it => it.body === e.body);
+      if (other?.kind === 'golf' && Math.abs(e.contact.getImpactVelocityAlongNormal()) > 0.25 && performance.now() - golf.lastStroke > 400) { golf.lastStroke = performance.now(); golf.strokes++; }
+    } });
+}
+const glassItemMat = std(0xe2f3f5, 0.05, 0, { transparent: true, opacity: 0.35, depthWrite: false });
+function servedItem(key, x, y, z) {
+  const d = ITEMS[key], g = new THREE.Group();
+  if (d.kind === 'drink') {
+    const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.034, 0.14, 16, 1, true), glassItemMat); g.add(glass);
+    const liquid = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.032, 0.1, 16), std(d.color, 0.2)); liquid.position.y = -0.015; g.add(liquid);
+    const straw = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.2, 6), std(0xffffff, 0.6)); straw.position.set(0.015, 0.05, 0); straw.rotation.z = -0.2; g.add(straw);
+    return addItem({ kind: 'served', object: g, shapes: [[new CANNON.Cylinder(0.04, 0.036, 0.14, 10)]], mass: 0.3, pos: [x, y, z], radius: 0.05 });
+  }
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.02, 20), std(0xf4f1ea, 0.4)); g.add(plate);
+  for (let i = 0; i < 4; i++) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.03, 0.05), std(i % 2 ? d.color : 0xe8d2a0, 0.8)); p.position.set(Math.cos(i * 1.6) * 0.05, 0.025, Math.sin(i * 1.6) * 0.05); p.rotation.y = i; g.add(p); }
+  return addItem({ kind: 'served', object: g, shapes: [[new CANNON.Cylinder(0.12, 0.12, 0.05, 12), new CANNON.Vec3(0, 0.012, 0)]], mass: 0.5, pos: [x, y, z], radius: 0.12 });
+}
+
+for (let i = 0; i < 6; i++) tennisBall(36.6 + ((i % 2) - 0.5) * 0.12, 0.08 + (i >> 1) * 0.07, -24.8 + ((i >> 1) % 2 - 0.5) * 0.1);
+tennisBall(29.5, 0.05, -26); tennisBall(31, 0.05, -39);
+beachBall(-3, 0.3, -24.2);
+golfBall(-26, 0.025, -29.8);
+golfBall(-23.55, 0.8, -29.2); golfBall(-23.4, 0.8, -29.25);
+putter(-23.3, 0.81, -29.5);
+
+// ============================================================================
+// Robots (AGIBOT)
+// ============================================================================
+function buildRobotModel() {
+  const white = std(0xf4f5f5, 0.25, 0.1), graphite = std(0x1d2228, 0.45, 0.25), gray = std(0x8d959d, 0.4, 0.2), accent = std(0xefbe45, 0.3, 0.3);
+  const visor = std(0x0b0e12, 0.12, 0.4);
+  const eyeM = new THREE.MeshStandardMaterial({ color: 0xc9fbff, emissive: 0x5fe6ff, emissiveIntensity: 2 });
+  const coreM = new THREE.MeshStandardMaterial({ color: 0x9fb2bd, emissive: 0x6ad8ff, emissiveIntensity: 0.5, roughness: 0.2 });
+  const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
+  const m = (geo, mat, parent, x = 0, y = 0, z = 0) => { const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); o.castShadow = true; parent.add(o); return o; };
+  m(new THREE.BoxGeometry(0.3, 0.16, 0.2), graphite, body, 0, 0.9, 0);
+  m(new THREE.CapsuleGeometry(0.2, 0.32, 6, 16), white, body, 0, 1.2, 0).scale.set(1, 1, 0.78);
+  m(new THREE.BoxGeometry(0.26, 0.36, 0.1), graphite, body, 0, 1.22, -0.14);
+  const core = m(new THREE.CapsuleGeometry(0.035, 0.12, 4, 10), coreM, body, 0, 1.3, 0.155); core.rotation.z = Math.PI / 2;
+  const head = new THREE.Group(); head.position.set(0, 1.63, 0); body.add(head);
+  m(new THREE.CylinderGeometry(0.045, 0.055, 0.08, 12), gray, head, 0, -0.04, 0);
+  m(new THREE.SphereGeometry(0.16, 24, 18), white, head, 0, 0.1, 0).scale.set(1, 0.92, 1.04);
+  m(new THREE.BoxGeometry(0.22, 0.14, 0.12), visor, head, 0, 0.1, 0.1);
+  m(new THREE.BoxGeometry(0.18, 0.015, 0.02), gray, head, 0, 0.19, 0.155);
+  const eyes = [-1, 1].map(s => { const e = m(new THREE.CapsuleGeometry(0.018, 0.03, 4, 8), eyeM, head, s * 0.048, 0.115, 0.162); e.rotation.z = Math.PI / 2; return e; });
+  const mouth = m(new THREE.TorusGeometry(0.035, 0.006, 6, 14, Math.PI), new THREE.MeshStandardMaterial({ color: 0x9befff, emissive: 0x62ddff, emissiveIntensity: 1 }), head, 0, 0.065, 0.161);
+  mouth.rotation.x = Math.PI;
+  const arms = [-1, 1].map(s => {
+    const shoulder = new THREE.Group(); shoulder.position.set(s * 0.27, 1.4, 0); body.add(shoulder);
+    m(new THREE.SphereGeometry(0.065, 12, 10), white, shoulder);
+    m(new THREE.CapsuleGeometry(0.048, 0.17, 4, 10), white, shoulder, 0, -0.14, 0);
+    const elbow = new THREE.Group(); elbow.position.y = -0.29; shoulder.add(elbow);
+    m(new THREE.CylinderGeometry(0.045, 0.045, 0.06, 10), gray, elbow).rotation.z = Math.PI / 2;
+    m(new THREE.CapsuleGeometry(0.044, 0.15, 4, 10), white, elbow, 0, -0.13, 0.01);
+    m(new THREE.BoxGeometry(0.07, 0.09, 0.05), accent, elbow, 0, -0.28, 0.02);
+    shoulder.rotation.z = s * 0.06;
+    return { shoulder, elbow };
+  });
+  const legs = [-1, 1].map(s => {
+    const hip = new THREE.Group(); hip.position.set(s * 0.1, 0.86, 0); body.add(hip);
+    m(new THREE.SphereGeometry(0.065, 12, 10), graphite, hip);
+    m(new THREE.CapsuleGeometry(0.06, 0.26, 4, 10), white, hip, 0, -0.2, 0);
+    const knee = new THREE.Group(); knee.position.y = -0.41; hip.add(knee);
+    m(new THREE.CylinderGeometry(0.05, 0.05, 0.07, 10), gray, knee).rotation.z = Math.PI / 2;
+    m(new THREE.CapsuleGeometry(0.055, 0.25, 4, 10), white, knee, 0, -0.19, 0);
+    m(new THREE.BoxGeometry(0.1, 0.05, 0.21), graphite, knee, 0, -0.425, 0.035);
+    m(new THREE.BoxGeometry(0.1, 0.03, 0.07), accent, knee, 0, -0.43, 0.13);
+    return { hip, knee };
+  });
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.012, 8, 40), new THREE.MeshStandardMaterial({ color: 0xffdfa9, emissive: 0xd49f46, emissiveIntensity: 1.2 }));
+  halo.rotation.x = Math.PI / 2; halo.position.y = 0.02; root.add(halo);
+  return { root, body, head, eyes, mouth, coreM, arms, legs, halo };
+}
+
+const player = { vel: new THREE.Vector3(), vy: 0, feetY: 0, onGround: true, stepOffset: 0, yaw: SPAWN.yaw, pitch: 0, bob: 0 };
+const head = { pos: new THREE.Vector3(), yaw: 0 };
+const playerXZ = () => ({ x: head.pos.x, z: head.pos.z });
+
+class Robot {
+  constructor(id, x, z, yaw, counter) {
+    Object.assign(this, { id, home: { x, z }, homeYaw: yaw, counter, yaw, faceYaw: yaw, state: 'idle', path: null, pi: 0, speed: 0, phase: 0, mode: null,
+      talkT: 0, waveT: 0, blink: 2 + Math.random() * 3, greeted: false, greetCount: 0, returnAt: 0 });
+    this.m = buildRobotModel();
+    this.root = this.m.root;
+    this.root.position.set(x, topUnder(x, z, 1), z);
+    this.root.rotation.y = yaw;
+    scene.add(this.root);
+    const proxy = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 1.9, 8), new THREE.MeshBasicMaterial());
+    proxy.visible = false; proxy.position.y = 0.95; proxy.userData.robot = this;
+    this.root.add(proxy); pickables.push(proxy);
+  }
+  get pos() { return this.root.position; }
+  dist(p) { return Math.hypot(p.x - this.pos.x, p.z - this.pos.z); }
+  goTo(x, z, mode) {
+    const p = findPath(this.pos.x, this.pos.z, x, z);
+    if (!p || p.length < 2) return false;
+    Object.assign(this, { path: p, pi: 1, mode, state: 'walk', returnAt: 0 });
+    return true;
+  }
+  stopAt(x, z) { this.path = null; this.state = 'idle'; this.mode = null; this.pos.set(x, topUnder(x, z, 1), z); }
+  wave() { this.waveT = 2.4; }
+  talk(text) { this.talkT = clamp(text.length * 0.055, 1.5, 10); }
+  remaining() {
+    if (!this.path) return 0;
+    let s = Math.hypot(this.path[this.pi].x - this.pos.x, this.path[this.pi].z - this.pos.z);
+    for (let i = this.pi + 1; i < this.path.length; i++) s += Math.hypot(this.path[i].x - this.path[i - 1].x, this.path[i].z - this.path[i - 1].z);
+    return s;
+  }
+  update(dt, now) {
+    const p = playerXZ(), pos = this.pos, dp = Math.hypot(p.x - pos.x, p.z - pos.z), toP = Math.atan2(p.x - pos.x, p.z - pos.z);
+    let desired = this.yaw;
+    if (this.state === 'walk') {
+      const wp = this.path[this.pi], dx = wp.x - pos.x, dz = wp.z - pos.z, d = Math.hypot(dx, dz);
+      if (d < 0.2) {
+        if (++this.pi >= this.path.length) {
+          if (this.mode === 'home') this.faceYaw = this.homeYaw; else this.faceYaw = toP;
+          this.state = 'idle'; this.path = null; this.mode = null;
+        }
+      } else {
+        desired = Math.atan2(dx, dz);
+        let target = this.mode === 'escort' ? escortSpeed(this) : 1.25;
+        const fx = Math.sin(this.yaw), fz = Math.cos(this.yaw);
+        if (dp < 0.95 && (p.x - pos.x) * fx + (p.z - pos.z) * fz > 0) target = 0;
+        if (target === 0) desired = toP;
+        this.speed = damp(this.speed, target * Math.max(0, Math.cos(angDiff(desired, this.yaw))), 5, dt);
+        const step = Math.min(d, this.speed * dt);
+        pos.x += dx / d * step; pos.z += dz / d * step;
+      }
+      this.faceYaw = desired;
+    } else {
+      this.speed = damp(this.speed, 0, 6, dt);
+      if (this.returnAt && now > this.returnAt) { this.returnAt = 0; this.goTo(this.home.x, this.home.z, 'home'); }
+      if (dp < 7) { if (Math.abs(angDiff(toP, this.yaw)) > 0.75) this.faceYaw = toP; }
+      else if (Math.hypot(pos.x - this.home.x, pos.z - this.home.z) < 0.5) this.faceYaw = this.homeYaw;
+    }
+    this.yaw = dampAngle(this.yaw, this.faceYaw, 6, dt);
+    this.root.rotation.y = this.yaw;
+    pos.y = damp(pos.y, surfaceAt(pos.x, pos.z, pos.y + STEP), 10, dt);
+    // procedural animation
+    const m = this.m, amp = clamp(this.speed / 1.1, 0, 1);
+    this.phase += dt * (2 + this.speed * 5.4);
+    m.legs.forEach((l, i) => {
+      const ph = this.phase + i * Math.PI;
+      l.hip.rotation.x = -Math.sin(ph) * 0.5 * amp;
+      l.knee.rotation.x = Math.max(0, Math.sin(ph + 1.3)) * 0.8 * amp;
+    });
+    m.arms.forEach((a, i) => { a.shoulder.rotation.x = damp(a.shoulder.rotation.x, Math.sin(this.phase + i * Math.PI) * 0.4 * amp, 10, dt); });
+    m.body.position.y = Math.abs(Math.sin(this.phase)) * 0.03 * amp + Math.sin(now * 1.8) * 0.006;
+    const look = dp < 9 ? clamp(angDiff(toP, this.yaw), -1.1, 1.1) : 0;
+    m.head.rotation.y = damp(m.head.rotation.y, look, 6, dt);
+    m.head.rotation.x = damp(m.head.rotation.x, dp < 9 ? clamp(-Math.atan2(head.pos.y - (pos.y + 1.74), dp), -0.45, 0.35) : 0, 5, dt);
+    const arm = m.arms[0];
+    if (this.waveT > 0) {
+      this.waveT -= dt;
+      const k = Math.min(1, this.waveT / 0.4, (2.4 - this.waveT) / 0.4);
+      arm.shoulder.rotation.z = lerp(-0.06, -2.55, k); arm.shoulder.rotation.x = 0;
+      arm.elbow.rotation.z = Math.sin(now * 10) * 0.45 * k;
+    } else {
+      arm.shoulder.rotation.z = damp(arm.shoulder.rotation.z, -0.06, 8, dt);
+      arm.elbow.rotation.z = damp(arm.elbow.rotation.z, 0, 8, dt);
+    }
+    if (this.talkT > 0) { this.talkT -= dt; m.mouth.scale.y = 1 + Math.abs(Math.sin(now * 14)) * 1.6; m.coreM.emissiveIntensity = 1.2 + Math.sin(now * 9) * 0.6; }
+    else { m.mouth.scale.y = 1; m.coreM.emissiveIntensity = 0.5; }
+    this.blink -= dt;
+    const bl = this.blink < 0.12 ? 0.15 : 1;
+    m.eyes.forEach(e => { e.scale.x = bl; });
+    if (this.blink < 0) this.blink = 2 + Math.random() * 4;
+    m.halo.rotation.z += dt * 0.4;
+  }
+}
+const COUNTERS = {
+  reception: { y: 1.3, slots: [-4.9, -4.4, -3.9, -2.5, -2.0, -1.5].map(x => [x, 18.05]) },
+  vip: { y: 1.46, slots: [-6.5, -5.9, -5.3, -2.7, -2.1, -1.5].map(z => [31.35, z]) }
+};
+const robots = [new Robot('reception', -3.2, 16.7, 0, COUNTERS.reception), new Robot('vip', 32.7, -4, -Math.PI / 2, COUNTERS.vip)];
+const robotVip = robots[1];
+const nearestRobot = () => robots.reduce((a, b) => a.dist(playerXZ()) <= b.dist(playerXZ()) ? a : b);
+
+// ============================================================================
+// Audio: procedural SFX + spatial ambience (no external files)
+// ============================================================================
+const sfx = {
+  ctx: null, out: null, noise: null, birdT: 5,
+  init() {
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      const c = this.ctx = new AC();
+      this.out = c.createGain(); this.out.gain.value = 0.8; this.out.connect(c.destination);
+      const len = c.sampleRate * 2, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      this.noise = buf;
+      const wind = this.loop(), lp = c.createBiquadFilter(), wg = c.createGain();
+      lp.type = 'lowpass'; lp.frequency.value = 380; wg.gain.value = 0.05;
+      wind.connect(lp).connect(wg).connect(this.out); wind.start();
+      const f = this.loop(), bp = c.createBiquadFilter(), fg = c.createGain();
+      bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.6; fg.gain.value = 0.5;
+      f.connect(bp).connect(fg).connect(this.panner(0, 1, -4)).connect(this.out); f.start();
+    } catch { this.ctx = null; }
+  },
+  loop() { const s = this.ctx.createBufferSource(); s.buffer = this.noise; s.loop = true; return s; },
+  panner(x, y, z) {
+    const p = this.ctx.createPanner();
+    Object.assign(p, { panningModel: 'HRTF', distanceModel: 'inverse', refDistance: 2, maxDistance: 60, rolloffFactor: 1.4 });
+    if (p.positionX) { p.positionX.value = x; p.positionY.value = y; p.positionZ.value = z; } else p.setPosition(x, y, z);
+    return p;
+  },
+  tone(f, dur, { type = 'sine', vol = 0.12, slide = 1, delay = 0, dest = null } = {}) {
+    const c = this.ctx; if (!c) return;
+    const t0 = c.currentTime + delay, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t0);
+    if (slide !== 1) o.frequency.exponentialRampToValueAtTime(Math.max(40, f * slide), t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(dest || this.out); o.start(t0); o.stop(t0 + dur + 0.05);
+  },
+  burst(dur, from, to, vol) {
+    const c = this.ctx; if (!c) return;
+    const s = c.createBufferSource(), bp = c.createBiquadFilter(), g = c.createGain(), t0 = c.currentTime;
+    s.buffer = this.noise; bp.type = 'bandpass'; bp.Q.value = 1.2;
+    bp.frequency.setValueAtTime(from, t0); bp.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    s.connect(bp).connect(g).connect(this.out); s.start(t0); s.stop(t0 + dur + 0.05);
+  },
+  click() { this.tone(740, 0.08, { type: 'triangle', vol: 0.1 }); this.tone(1110, 0.06, { vol: 0.05, delay: 0.03 }); },
+  hover() { this.tone(1500, 0.025, { vol: 0.025 }); },
+  grab() { this.tone(420, 0.07, { type: 'triangle', vol: 0.08, slide: 1.5 }); },
+  whoosh() { this.burst(0.25, 500, 2200, 0.18); },
+  teleport() { this.burst(0.3, 1800, 300, 0.12); this.tone(260, 0.28, { vol: 0.08, slide: 3 }); },
+  bounce(v, kind) { const f = kind === 'golf' ? 1700 : kind === 'ball' ? 520 : 900; this.tone(f * (0.9 + Math.random() * 0.2), 0.07, { type: kind === 'golf' ? 'square' : 'sine', vol: Math.min(0.22, 0.03 * v) }); },
+  chime() { [659, 880, 1319].forEach((f, i) => this.tone(f, 0.6, { vol: 0.07, delay: i * 0.1 })); },
+  update(dt, camPos, fwd) {
+    const c = this.ctx; if (!c) return;
+    const L = c.listener;
+    if (L.positionX) {
+      L.positionX.value = camPos.x; L.positionY.value = camPos.y; L.positionZ.value = camPos.z;
+      L.forwardX.value = fwd.x; L.forwardY.value = fwd.y; L.forwardZ.value = fwd.z; L.upX.value = 0; L.upY.value = 1; L.upZ.value = 0;
+    } else { L.setPosition(camPos.x, camPos.y, camPos.z); L.setOrientation(fwd.x, fwd.y, fwd.z, 0, 1, 0); }
+    if ((this.birdT -= dt) < 0) {
+      this.birdT = 3 + Math.random() * 7;
+      const a = Math.random() * TAU, r = 8 + Math.random() * 20, pan = this.panner(camPos.x + Math.cos(a) * r, 5, camPos.z + Math.sin(a) * r);
+      pan.connect(this.out);
+      const base = 2600 + Math.random() * 1800, n = 2 + (Math.random() * 4 | 0);
+      for (let i = 0; i < n; i++) this.tone(base * (1 + Math.random() * 0.15), 0.09, { vol: 0.05, slide: 1.35, delay: i * 0.13, dest: pan });
+    }
+  }
+};
+let ttsVoices = [];
+if ('speechSynthesis' in window) { const lv = () => { ttsVoices = speechSynthesis.getVoices(); }; lv(); speechSynthesis.addEventListener?.('voiceschanged', lv); }
+function tts(text) {
+  if (!settings.voice || !('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = { es: 'es-ES', en: 'en-US', zh: 'zh-CN' }[settings.lang];
+    const v = ttsVoices.find(v => v.lang.toLowerCase().startsWith(settings.lang)); if (v) u.voice = v;
+    u.rate = 1; u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  } catch { /* speech not available */ }
+}
+
+// ============================================================================
+// In-world UI panels (same UI for desktop and VR, drawn on canvas textures)
+// ============================================================================
+const panels = [];
+class Panel {
+  constructor(wm, hm, pw, ph, draw, { interactive = true, order = 20 } = {}) {
+    Object.assign(this, { cw: pw, ch: ph, draw, interactive, buttons: [], hover: null, flash: null, flashT: 0, dirty: true, placed: false, target: new THREE.Vector3() });
+    this.canvas = document.createElement('canvas'); this.canvas.width = pw; this.canvas.height = ph;
+    this.ctx = this.canvas.getContext('2d');
+    this.tex = new THREE.CanvasTexture(this.canvas); this.tex.colorSpace = THREE.SRGBColorSpace; this.tex.anisotropy = MAX_ANISO;
+    this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(wm, hm), new THREE.MeshBasicMaterial({ map: this.tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }));
+    this.mesh.renderOrder = order; this.mesh.visible = false; this.mesh.userData.panel = this;
+    scene.add(this.mesh); panels.push(this);
+  }
+  get visible() { return this.mesh.visible; }
+  render() { this.ctx.clearRect(0, 0, this.cw, this.ch); this.buttons = []; this.draw(this.ctx, this); this.tex.needsUpdate = true; this.dirty = false; }
+  button(id, label, x, y, w, h, onClick, o = {}) {
+    const c = this.ctx, hov = this.hover === id && !o.disabled, fl = this.flash === id;
+    c.save(); rr(c, x, y, w, h, 18);
+    let bg = o.primary ? '#c39a5d' : o.active ? '#6f5535' : '#24343d';
+    if (hov) bg = o.primary ? '#e2bb7d' : '#3a525e';
+    if (fl) bg = '#f0d29e';
+    c.globalAlpha = o.disabled ? 0.4 : 1; c.fillStyle = bg; c.fill();
+    c.lineWidth = hov ? 5 : 3; c.strokeStyle = hov ? '#f6d9a6' : 'rgba(205,168,112,.55)'; c.stroke();
+    c.fillStyle = o.primary || fl ? '#18222a' : '#f7ebd7';
+    fitFont(c, label, w - 30, o.size || 34, 600);
+    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, x + w / 2, y + h / 2 + 1);
+    c.restore();
+    this.buttons.push({ id, x, y, w, h, onClick, disabled: !!o.disabled });
+  }
+  hit(uv) {
+    if (!uv) return null;
+    const x = uv.x * this.cw, y = (1 - uv.y) * this.ch;
+    return this.buttons.find(b => !b.disabled && x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) || null;
+  }
+  setHover(id) { if (this.hover !== id) { this.hover = id; this.dirty = true; return true; } return false; }
+  press(b) { this.flash = b.id; this.flashT = 0.16; this.dirty = true; b.onClick(); }
+}
+function panelBg(c, W, H) {
+  rr(c, 6, 6, W - 12, H - 12, 34); c.fillStyle = 'rgba(14,23,29,.94)'; c.fill();
+  c.lineWidth = 4; c.strokeStyle = 'rgba(212,170,108,.85)'; c.stroke();
+  const g = c.createLinearGradient(0, 0, 0, 150); g.addColorStop(0, 'rgba(212,170,108,.18)'); g.addColorStop(1, 'rgba(212,170,108,0)');
+  rr(c, 8, 8, W - 16, 150, 32); c.fillStyle = g; c.fill();
+}
+function wrapText(c, text, maxW) {
+  const out = []; let line = '';
+  const tokens = String(text).match(/[　-鿿＀-￯]|[^\s　-鿿＀-￯]+|\s+/g) || [];
+  for (const tk of tokens) {
+    if (/^\s+$/.test(tk)) { if (line) line += ' '; continue; }
+    if (c.measureText(line + tk).width > maxW && line.trim()) { out.push(line.trim()); line = tk; } else line += tk;
+  }
+  if (line.trim()) out.push(line.trim());
+  return out;
+}
+function drawLines(c, lines, x, y, lh, max) {
+  lines.slice(0, max).forEach((l, i) => c.fillText(i === max - 1 && lines.length > max ? l + '…' : l, x, y + i * lh));
+}
+
+// ---------- state shared by panels ----------
+const ui = { page: 'main', message: '', speaker: null };
+const cart = {};
+const cartCount = () => Object.values(cart).reduce((a, b) => a + b, 0);
+const cartTotal = () => Object.entries(cart).reduce((s, [k, q]) => s + ITEMS[k].price * q, 0);
+let xrActive = false, started = false;
+
+const guide = { active: false, zone: null, path: null, len: 0, s: 0, robot: null, autoWalk: false, timer: 0, recalc: 0, delay: 0, end: null };
+
+function currentZone() {
+  const p = playerXZ(); let best = null, bd = Infinity;
+  for (const [k, z] of Object.entries(ZONES)) { const d = Math.hypot(p.x - z.area[0], p.z - z.area[1]); if (d < z.area[2] && d < bd) { bd = d; best = k; } }
+  return best;
+}
+const locationLabel = () => { const z = currentZone(); return (z ? zoneName(z) : t('clubPaths')) + ' · ' + t('time'); };
+
+function pageItems() {
+  const go = page => () => { ui.page = page; assistant.dirty = true; };
+  const P = ui.page, it = [];
+  if (P === 'main') {
+    it.push({ id: 'reserve', fn: () => speak(t('reservationMsg')) }, { id: 'menu', fn: () => speak(t('menuMsg')) },
+      { id: 'drink', fn: go('drinks') }, { id: 'snack', fn: go('snacks') }, { id: 'zones', fn: go('zones') },
+      { id: 'guideVip', fn: () => startGuide('vip'), primary: true }, { id: 'call', fn: () => speak(t('assistanceMsg')) }, { id: 'help', fn: () => speak(t('helpMsg')) });
+    if (guide.active) it.push({ id: 'jump', fn: jumpToDestination }, { id: 'cancel', fn: cancelGuide });
+  } else if (P === 'drinks' || P === 'snacks') {
+    for (const [k, d] of Object.entries(ITEMS)) if (d.kind === (P === 'drinks' ? 'drink' : 'snack')) it.push({ id: 'add_' + k, label: `${pick(d.name)} · ${fmt(d.price)}`, fn: () => addToCart(k) });
+    it.push({ id: 'back', fn: go('main') });
+  } else if (P === 'zones') {
+    for (const k of ZONE_ORDER) it.push({ id: 'z_' + k, label: zoneName(k), fn: () => startGuide(k) });
+    it.push({ id: 'back', fn: go('main') });
+  } else if (P === 'order') {
+    it.push({ id: 'confirm', fn: confirmOrder, primary: true }, { id: 'clear', fn: clearCart }, { id: 'back', fn: go('main') });
+  } else it.push({ id: 'back', fn: go('main') });
+  return it;
+}
+const PAGE_TITLE = { main: 'pageMain', drinks: 'pageDrinks', snacks: 'pageSnacks', zones: 'pageZones', order: 'pageOrder', controls: 'pageControls' };
+
+const assistant = new Panel(0.92, 0.8128, 1200, 1060, (c, p) => {
+  const W = p.cw, H = p.ch;
+  panelBg(c, W, H);
+  c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+  c.font = `600 46px ${SERIF}`; c.fillStyle = '#e3bf85'; c.fillText('NCLUB · AGIBOT', 44, 78);
+  c.font = `400 27px ${UI_FONT}`; c.fillStyle = '#b9b4aa';
+  const spk = ui.speaker ? t(ui.speaker.id === 'vip' ? 'speakerVip' : 'speakerReception') + ' · ' : '';
+  c.fillText(spk + locationLabel(), 44, 118);
+  p.button('close', '✕', W - 112, 34, 72, 72, closeAssistant, { size: 38 });
+  const controls = ui.page === 'controls', boxH = controls ? 670 : 240;
+  rr(c, 36, 142, W - 72, boxH, 18); c.fillStyle = '#1e2d35'; c.fill();
+  c.fillStyle = '#d3a862'; c.fillRect(36, 160, 6, boxH - 36);
+  c.fillStyle = '#f7ebd7';
+  if (controls) {
+    c.font = `500 30px ${UI_FONT}`;
+    let y = 196;
+    for (const line of t(xrActive ? 'ctlVR' : 'ctlDesk')) { const ls = wrapText(c, '• ' + line, W - 150); drawLines(c, ls, 66, y, 40, 3); y += ls.length * 40 + 16; }
+  } else if (ui.page === 'order') {
+    c.font = `500 31px ${UI_FONT}`;
+    const rows = Object.entries(cart).filter(([, q]) => q);
+    if (!rows.length) c.fillText(t('emptyCart'), 66, 200);
+    rows.slice(0, 4).forEach(([k, q], i) => { c.fillText(`${pick(ITEMS[k].name)} ×${q}`, 66, 196 + i * 42); c.textAlign = 'right'; c.fillText(fmt(ITEMS[k].price * q), W - 70, 196 + i * 42); c.textAlign = 'left'; });
+    if (rows.length) { c.font = `700 31px ${UI_FONT}`; c.fillStyle = '#e3bf85'; c.fillText(`${t('total')}: ${fmt(cartTotal())}`, 66, 360); }
+  } else {
+    c.font = `500 34px ${UI_FONT}`;
+    drawLines(c, wrapText(c, ui.message || t('assistantShort'), W - 150), 66, 196, 45, 5);
+  }
+  c.font = `700 25px ${UI_FONT}`; c.fillStyle = '#d3a862';
+  const y0 = controls ? 840 : 432;
+  if (!controls) c.fillText(t(PAGE_TITLE[ui.page]).toUpperCase(), 44, 418);
+  const items = pageItems(), bw = (W - 72 - 20) / 2, bh = 82;
+  items.forEach((it, i) => p.button(it.id, it.label || t(it.id), 36 + (i % 2) * (bw + 20), y0 + Math.floor(i / 2) * 98, bw, bh, it.fn, it));
+  c.strokeStyle = 'rgba(205,168,112,.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(40, H - 120); c.lineTo(W - 40, H - 120); c.stroke();
+  c.font = `500 28px ${UI_FONT}`; c.fillStyle = '#f2dfbd';
+  c.fillText(`${t('orderTitle')}: ${cartCount()} · ${fmt(cartTotal())}`, 44, H - 54);
+  p.button('viewOrder', t('viewOrder', cartCount()), W - 430, H - 102, 390, 76, () => { ui.page = 'order'; assistant.dirty = true; }, { size: 30, active: ui.page === 'order' });
 });
 
-// Panel WebXR: objects inside the 3D scene, not a DOM overlay (DOM is invisible in immersive VR).
-const raycaster=new THREE.Raycaster(),tempMatrix=new THREE.Matrix4();
-const interactables=[],vrButtons=[],vrUI=new THREE.Group();
-scene.add(vrUI);
-let vrMenuOpen=true,vrMenuPage='main',vrLastResponse='';
-const vrcanvas=document.createElement('canvas');vrcanvas.width=1024;vrcanvas.height=256;
-const vrctx=vrcanvas.getContext('2d'),vrtex=new THREE.CanvasTexture(vrcanvas);
-const vrMessage=new THREE.Mesh(new THREE.PlaneGeometry(1.22,.30),
- new THREE.MeshBasicMaterial({map:vrtex,transparent:true,side:THREE.DoubleSide}));
-vrMessage.position.set(0,.87,.012);vrUI.add(vrMessage);
-const vrBacking=new THREE.Mesh(new THREE.PlaneGeometry(1.35,2.00),
- new THREE.MeshBasicMaterial({color:0x18262d,transparent:true,opacity:.94,side:THREE.DoubleSide,depthWrite:false}));
-vrBacking.position.set(0,.05,-.03);vrUI.add(vrBacking);
-function writeVRMessage(text){
- vrLastResponse=text;vrctx.clearRect(0,0,1024,256);
- vrctx.fillStyle='#1c2e35';vrctx.fillRect(0,0,1024,256);
- vrctx.fillStyle='#f5dfb4';vrctx.textAlign='center';vrctx.font='bold 47px sans-serif';
- vrctx.fillText('NCLUB  ·  AGIBOT',512,62);
- vrctx.font='35px sans-serif';vrctx.fillStyle='#ffffff';
- const words=Array.from(text);let line='',lines=[];
- for(const ch of words){if(vrctx.measureText(line+ch).width>890){lines.push(line);line='';}line+=ch;}
- if(line)lines.push(line);
- lines.slice(0,3).forEach((l,i)=>vrctx.fillText(l,512,116+i*42));
- vrtex.needsUpdate=true;
-}
-function vrButton(text,y,handler){
- const group=new THREE.Group();group.position.set(0,y,.015);vrUI.add(group);
- const base=new THREE.Mesh(new THREE.PlaneGeometry(1.15,.132),
-  new THREE.MeshBasicMaterial({color:0x35454a,side:THREE.DoubleSide}));
- group.add(base);
- const cv=document.createElement('canvas');cv.width=1024;cv.height=128;
- const ctx=cv.getContext('2d');const tex=new THREE.CanvasTexture(cv);
- const label=new THREE.Mesh(new THREE.PlaneGeometry(1.13,.13),
-  new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));
- label.position.z=.004;group.add(label);
- const item={base,ctx,tex,handler,text};
- vrButtons.push(item);interactables.push(base);base.userData.action=handler;
- return item;
-}
-const vrDefs=[
- ['VIP',()=>beginJourney(...placeXYZ('vip'))],
- ['RESERVE',()=>speak(L().reservationMsg)],
- ['MENU',()=>speak(L().menuMsg)],
- ['DRINK',()=>{addItem('Mocktail',22000);writeVRMessage(L().addMsg('Mocktail'))}],
- ['SNACK',()=>{addItem('Bruschettas',26000);writeVRMessage(L().addMsg('Bruschettas'))}],
- ['CONFIRM',()=>$('confirm').click()],
- ['AREAS',()=>setVRPage('areas')],
- ['HELP',()=>speak(L().helpMsg)],
- ['CLOSE',()=>{vrMenuOpen=false;vrUI.visible=false}]
-];
-const vrAreaKeys=['reception','vip','restaurant','fields','minigolf','bath','info','regular'];
-for(let i=0;i<9;i++)vrButton('',.57-i*.161,()=>{const item=vrMenuPage==='areas'?vrAreaActions[i]:vrDefs[i];item?.[1]?.()});
-let vrAreaActions=[];
-function setVRPage(page){
- vrMenuPage=page;
- vrAreaActions=vrAreaKeys.map(k=>[placeName(k),()=>{beginJourney(...placeXYZ(k));setVRPage('main')}]);
- vrAreaActions.push([L().back,()=>setVRPage('main')]);
- const names=lang==='zh'
- ?['贵宾厅','查询预订','查看菜单','点饮品','点小吃','确认订单','俱乐部区域','帮助','关闭菜单']
- :lang==='en'
- ?['VIP LOUNGE','CHECK BOOKING','VIEW VIP MENU','ORDER DRINK','ORDER SNACK','CONFIRM ORDER','CLUB AREAS','HELP','CLOSE MENU']
- :['LOUNGE VIP','CONSULTAR RESERVA','VER MENÚ VIP','PEDIR BEBIDA','PEDIR SNACK','CONFIRMAR PEDIDO','ZONAS DEL CLUB','AYUDA','CERRAR MENÚ'];
- vrButtons.forEach((item,i)=>{
-  const text=page==='areas'?vrAreaActions[i][0]:names[i];
-  item.ctx.clearRect(0,0,1024,128);
-  item.ctx.fillStyle='#f7e0b2';item.ctx.textAlign='center';
-  item.ctx.font='bold 44px sans-serif';item.ctx.fillText(text,512,81,940);
-  item.tex.needsUpdate=true;item.base.material.color.set(0x35454a);
- });
-}
-function placeVRPanel(){
- const xrCamera=renderer.xr.getCamera(camera);
- const eyePos=xrCamera.getWorldPosition(new THREE.Vector3());
- const headYaw=new THREE.Euler().setFromQuaternion(xrCamera.getWorldQuaternion(new THREE.Quaternion()),'YXZ').y;
- vrUI.position.copy(eyePos).add(new THREE.Vector3(-Math.sin(headYaw)*2.0,0,-Math.cos(headYaw)*2.0));
- vrUI.position.y=eyePos.y-.15;
- vrUI.rotation.set(0,headYaw,0);
-}
-function showVRMenu(){vrMenuOpen=true;vrUI.visible=true;setVRPage('main');placeVRPanel();}
-writeVRMessage('Bienvenido a NClub');
-setVRPage('main');vrUI.visible=false;
-const xrControllers=[];
-for(let i=0;i<2;i++){
- const ctrl=renderer.xr.getController(i);xrRig.add(ctrl);
- const beam=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3(0,0,-3)]),
-  new THREE.LineBasicMaterial({color:0xffd89b,transparent:true,opacity:.85}));
- ctrl.add(beam);
- ctrl.addEventListener('select',()=>{
-  if(!vrMenuOpen){showVRMenu();return;}
-  tempMatrix.identity().extractRotation(ctrl.matrixWorld);
-  raycaster.ray.origin.setFromMatrixPosition(ctrl.matrixWorld);
-  raycaster.ray.direction.set(0,0,-1).applyMatrix4(tempMatrix);
-  vrUI.updateMatrixWorld(true);
-  const hits=raycaster.intersectObjects(interactables,false);
-  if(hits.length&&hits[0].distance<5)hits[0].object.userData.action?.();
- });
- ctrl.addEventListener('squeezestart',()=>{vrMenuOpen? (vrMenuOpen=false,vrUI.visible=false):showVRMenu()});
- xrControllers.push(ctrl);
-}
-renderer.xr.addEventListener('sessionstart',()=>{
- vrMenuOpen=true;vrUI.visible=true;writeVRMessage(L().assistantIntro);setVRPage('main');
- // headset matrices are available from the first XR frame, so position panel in animate()
- vrNeedPlace=true;
+const menuPanel = new Panel(0.34, 0.47, 680, 940, (c, p) => {
+  const W = p.cw;
+  panelBg(c, W, p.ch);
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  c.font = `600 46px ${SERIF}`; c.fillStyle = '#e3bf85'; c.fillText('NCLUB', 34, 72);
+  c.font = `700 24px ${UI_FONT}`; c.textAlign = 'right'; c.fillText(t('menuTitle'), W - 36, 70); c.textAlign = 'left';
+  c.font = `400 24px ${UI_FONT}`; c.fillStyle = '#b9b4aa'; c.fillText(locationLabel(), 34, 116);
+  const toggle = key => () => { settings[key] = !settings[key]; saveSettings(); applySettings(); menuPanel.dirty = true; };
+  const list = [
+    { id: 'm_assist', label: t('mAssistant'), fn: toggleAssistant, active: assistant.visible },
+    { id: 'm_zones', label: t('mZones'), fn: () => openAssistant('zones') },
+    { id: 'm_hop', label: t('mHop'), fn: hopRoute, disabled: !guide.active },
+    { id: 'm_jump', label: t('mJump'), fn: jumpToDestination, disabled: !guide.active },
+    { id: 'm_lang', label: t('mLang'), fn: () => setLang({ es: 'en', en: 'zh', zh: 'es' }[settings.lang]) },
+    { id: 'm_voice', label: t('mVoice', settings.voice), fn: toggle('voice') },
+    { id: 'm_turn', label: t('mTurn', settings.snapTurn), fn: toggle('snapTurn') },
+    { id: 'm_vig', label: t('mVignette', settings.vignette), fn: toggle('vignette') },
+    { id: 'm_shadow', label: t('mShadows', settings.shadows), fn: toggle('shadows') },
+    { id: 'm_seat', label: t('mSeated', settings.seated), fn: toggle('seated') },
+    { id: 'm_ctl', label: t('mControls'), fn: () => openAssistant('controls') },
+    { id: 'm_reset', label: t('mReset'), fn: resetExperience },
+    xrActive ? { id: 'm_exit', label: t('mExit'), fn: () => renderer.xr.getSession()?.end() } : { id: 'm_close', label: t('mClose'), fn: closeMenu }
+  ];
+  const bw = (W - 68 - 16) / 2;
+  list.forEach((it, i) => p.button(it.id, it.label, 34 + (i % 2) * (bw + 16), 146 + Math.floor(i / 2) * 110, bw, 94, it.fn, { ...it, size: 29 }));
 });
-renderer.xr.addEventListener('sessionend',()=>{vrUI.visible=false;vrMenuOpen=false;});
-let vrNeedPlace=false;
-const clock=new THREE.Clock();let walkPhase=0,camYOffset=0,currentYaw=yaw;function animate(){let dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;for(let i=0;i<dashes.length;i++)dashes[i].mesh.material===routeCore&&(dashes[i].mesh.scale.z=.75+.2*Math.sin(t*3-dashes[i].index*.2));robot1.position.y=Math.sin(t*1.9)*.02;robot2.position.y=Math.sin(t*1.5+1)*.025;robot1.rotation.y=Math.sin(t*.3)*.12;robot1.userData.head.rotation.z=Math.sin(t*1.4)*0.04;robot2.userData.head.rotation.z=Math.sin(t*1.2+1)*0.03;robot1.userData.body.rotation.x=Math.sin(t*1.9)*0.02;robot2.userData.body.rotation.x=Math.sin(t*1.6+1)*0.015;robot1.userData.halo.rotation.z=t*0.12;robot2.userData.halo.rotation.z=-t*0.1;arrival.material.opacity=.9;let desiredYaw=yaw,moving=false;if(autopilot&&!renderer.xr.isPresenting){if(pathIndex<points.length-1){const a=points[pathIndex],b=points[pathIndex+1],diff=b.clone().sub(a),length=diff.length();progress+=dt*3/Math.max(length,.001);const done=progress>=1;if(done){progress=0;pathIndex++;if(destinationIsVip&&camera.position.z>12&&stage===1)updateStage(2)}const pos=done?b:a.clone().lerp(b,progress);safeMoveTo(pos.x,pos.z);desiredYaw=Math.atan2(-diff.x,-diff.z);moving=true}else{autopilot=false;routeGroup.visible=false;if(destinationIsVip)updateStage(3);else{$('assistant').classList.remove('hidden');$('stage').textContent=(lang==='es'?'Destino · ':lang==='en'?'Destination · ':'目的地 · ')+currentDestination;speak(L().arrivedOther(currentDestination))}}}else if(!renderer.xr.isPresenting){const f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),r=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);const mag=Math.hypot(f,r);const sp=dt*(2.6+mag*2.6);if(mag>0)moving=true;safeMoveTo(camera.position.x+(-Math.sin(yaw)*f+Math.cos(yaw)*r)*sp,camera.position.z+(-Math.cos(yaw)*f-Math.sin(yaw)*r)*sp);camera.position.x=THREE.MathUtils.clamp(camera.position.x,-30,77);camera.position.z=THREE.MathUtils.clamp(camera.position.z,-35,77)}if(!renderer.xr.isPresenting){currentYaw=THREE.MathUtils.lerp(currentYaw,desiredYaw,Math.min(1,dt*4.5));walkPhase += moving ? dt*8.5 : dt*2.2;const bobTarget=moving?Math.sin(walkPhase)*0.035:0;camYOffset=THREE.MathUtils.lerp(camYOffset,bobTarget,Math.min(1,dt*8));const roll=moving?Math.sin(walkPhase*.5)*0.012:0;const pitchBob=moving?Math.abs(Math.sin(walkPhase))*0.01:0;camera.position.y=THREE.MathUtils.lerp(camera.position.y,1.68+camYOffset,Math.min(1,dt*10));camera.rotation.set(pitch+pitchBob,currentYaw,roll,'YXZ');yaw=currentYaw}else{const eye=renderer.xr.getCamera(camera);if(vrNeedPlace){placeVRPanel();vrNeedPlace=false;}
-if(vrMenuOpen){const lookDir=new THREE.Vector3(0,0,-1);
-for(const item of vrButtons)item.base.material.color.set(0x35454a);
-for(const ctrl of xrControllers){tempMatrix.identity().extractRotation(ctrl.matrixWorld);
-raycaster.ray.origin.setFromMatrixPosition(ctrl.matrixWorld);
-raycaster.ray.direction.copy(lookDir).applyMatrix4(tempMatrix);
-const hit=raycaster.intersectObjects(interactables,false)[0];
-if(hit&&hit.distance<5)hit.object.material.color.set(0x866b42);}
+
+const toast = new Panel(0.85, 0.17, 1100, 220, (c, p) => {
+  const W = p.cw, H = p.ch;
+  rr(c, 4, 4, W - 8, H - 8, 28); c.fillStyle = 'rgba(14,23,29,.9)'; c.fill();
+  c.lineWidth = 3; c.strokeStyle = 'rgba(212,170,108,.7)'; c.stroke();
+  c.fillStyle = '#d3a862'; c.fillRect(24, 30, 7, H - 60);
+  c.fillStyle = '#f7ebd7'; c.font = `500 34px ${UI_FONT}`; c.textAlign = 'left'; c.textBaseline = 'middle';
+  const lines = wrapText(c, toast.text || '', W - 100), n = Math.min(3, lines.length);
+  drawLines(c, lines, 56, H / 2 - (n - 1) * 22, 44, 3);
+}, { interactive: false, order: 25 });
+toast.text = ''; toast.life = 0;
+function showToast(text, secs) {
+  toast.text = text; toast.life = secs ?? clamp(3 + text.length * 0.05, 4, 10);
+  toast.dirty = true; toast.mesh.visible = true; toast.mesh.material.opacity = 1;
 }
-const session=renderer.xr.getSession();if(session){for(let src of session.inputSources){const pad=src.gamepad;if(!pad)continue;const ax=pad.axes||[];const sx=Math.abs(ax[2]||0)>.05?(ax[2]||0):(ax[0]||0),sy=Math.abs(ax[3]||0)>.05?(ax[3]||0):(ax[1]||0);if(Math.abs(sx)+Math.abs(sy)>.2){const yawV=xrFacing.setFromQuaternion(eye.getWorldQuaternion(new THREE.Quaternion()),'YXZ').y;const nx=xrRig.position.x+(Math.cos(yawV)*sx+Math.sin(yawV)*sy)*dt*1.5;const nz=xrRig.position.z+(-Math.sin(yawV)*sx+Math.cos(yawV)*sy)*dt*1.5;if(!blocked(nx,nz)){xrRig.position.x=nx;xrRig.position.z=nz}else if(!blocked(nx,xrRig.position.z))xrRig.position.x=nx;else if(!blocked(xrRig.position.x,nz))xrRig.position.z=nz}}}}renderer.render(scene,camera)}renderer.setAnimationLoop(animate);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});if(!window.isSecureContext){
-  $('vrHelp').textContent='VR requiere HTTPS: abre el despliegue de Vercel desde Meta Quest Browser.';
-}else if(!navigator.xr){
-  $('vrHelp').textContent='WebXR no está disponible en este navegador. Abre Meta Quest Browser, no Chrome dentro de otra app.';
-}else{
-  navigator.xr.isSessionSupported('immersive-vr').then(ok=>{
-    if(!ok)$('vrHelp').textContent='Este navegador no permite sesiones immersive-vr. Actualiza Meta Quest Browser.';
-  }).catch(e=>$('vrHelp').textContent='No se pudo consultar WebXR: '+e.message);
+
+// ---------- assistant actions ----------
+function speak(text, robot = nearestRobot()) {
+  ui.message = text; ui.speaker = robot;
+  robot?.talk(text);
+  if (!assistant.visible || ui.page === 'controls' || ui.page === 'order') showToast(text);
+  assistant.dirty = true;
+  tts(text);
 }
-</script></body></html>
+function openAssistant(page = 'main') { ui.page = page; assistant.mesh.visible = true; toast.life = Math.min(toast.life, 0.3); assistant.placed = false; assistant.dirty = true; menuPanel.dirty = true; }
+function closeAssistant() { assistant.mesh.visible = false; menuPanel.dirty = true; }
+function toggleAssistant() { assistant.visible ? closeAssistant() : openAssistant(ui.page === 'controls' ? 'main' : ui.page); }
+function openMenu() { menuPanel.mesh.visible = true; menuPanel.placed = false; menuPanel.dirty = true; }
+function closeMenu() { menuPanel.mesh.visible = false; }
+function toggleMenu() { menuPanel.visible ? closeMenu() : openMenu(); }
+function talkTo(r) { r.wave(); openAssistant('main'); speak(r.greetCount++ ? t('assistantShort') : t('assistantIntro'), r); r.greeted = true; }
+function addToCart(k) { cart[k] = (cart[k] || 0) + 1; speak(t('addMsg', pick(ITEMS[k].name))); }
+function clearCart() { for (const k in cart) delete cart[k]; speak(t('clearMsg')); }
+function confirmOrder() {
+  const n = cartCount();
+  if (!n) { speak(t('emptyOrderMsg')); return; }
+  const robot = nearestRobot(), counter = robot.counter;
+  for (const it of items.filter(i => i.kind === 'served' && !i.held)) removeItem(it);
+  let slot = 0;
+  for (const [k, q] of Object.entries(cart)) for (let i = 0; i < q && slot < counter.slots.length; i++, slot++) {
+    const [x, z] = counter.slots[slot];
+    servedItem(k, x, counter.y + 0.08, z);
+  }
+  for (const k in cart) delete cart[k];
+  ui.page = 'main';
+  speak(t('confirmMsg', n) + ' ' + t('servedMsg'), robot);
+  sfx.chime();
+}
+
+// ============================================================================
+// Guided route: A* path, flowing amber ribbon, beacon and floor compass
+// ============================================================================
+function chevronTexture(glow) {
+  return canvasTex(128, 64, (c, w, h) => {
+    c.clearRect(0, 0, w, h);
+    if (glow) { const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(255,180,90,0)'); g.addColorStop(0.5, 'rgba(255,180,90,.22)'); g.addColorStop(1, 'rgba(255,180,90,0)'); c.fillStyle = g; c.fillRect(0, 0, w, h); }
+    c.strokeStyle = '#ffe3a8'; c.lineWidth = 12; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(w * 0.32, h * 0.18); c.lineTo(w * 0.62, h * 0.5); c.lineTo(w * 0.32, h * 0.82); c.stroke();
+  });
+}
+const ribbon = (() => {
+  const MAXP = 400, tex = chevronTexture(true);
+  const pos = new Float32Array(MAXP * 2 * 3), uv = new Float32Array(MAXP * 2 * 2), idx = new Uint16Array((MAXP - 1) * 6);
+  for (let i = 0; i < MAXP - 1; i++) { const a = i * 2; idx.set([a, a + 1, a + 2, a + 1, a + 3, a + 2], i * 6); }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2).setUsage(THREE.DynamicDrawUsage));
+  geo.setIndex(new THREE.BufferAttribute(idx, 1));
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, color: 0xffc56b, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false }));
+  mesh.frustumCulled = false; mesh.visible = false; mesh.renderOrder = 2; scene.add(mesh);
+  return {
+    mesh,
+    set(p, s0) {
+      const L = pathLen(p), pts = [];
+      for (let s = s0; s < L && pts.length < MAXP - 1; s += 0.8) pts.push(pointAt(p, s));
+      pts.push(pointAt(p, L));
+      if (pts.length < 2) { mesh.visible = false; return; }
+      let acc = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+        let tx = b.x - a.x, tz = b.z - a.z; const tl = Math.hypot(tx, tz) || 1; tx /= tl; tz /= tl;
+        if (i) acc += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z);
+        const y = topUnder(pts[i].x, pts[i].z, 0.6) + 0.035, nx = -tz * 0.28, nz = tx * 0.28;
+        pos.set([pts[i].x + nx, y, pts[i].z + nz, pts[i].x - nx, y, pts[i].z - nz], i * 6);
+        uv.set([acc / 0.75, 1, acc / 0.75, 0], i * 4);
+      }
+      geo.attributes.position.needsUpdate = true; geo.attributes.uv.needsUpdate = true;
+      geo.setDrawRange(0, (pts.length - 1) * 6);
+      mesh.visible = true;
+    },
+    update(dt) { tex.offset.x -= dt * 0.9; }
+  };
+})();
+const beacon = (() => {
+  const g = new THREE.Group(); g.visible = false; scene.add(g);
+  const tex = canvasTex(16, 256, (c, w, h) => { const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(255,214,150,0)'); gr.addColorStop(1, 'rgba(255,196,110,.85)'); c.fillStyle = gr; c.fillRect(0, 0, w, h); });
+  const add = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false };
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 6, 24, 1, true), new THREE.MeshBasicMaterial({ map: tex, ...add }));
+  col.position.y = 3; g.add(col);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.86, 48).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffcf7a, ...add }));
+  ring.position.y = 0.05; g.add(ring);
+  return {
+    show(x, z) { g.position.set(x, topUnder(x, z, 0.6), z); g.visible = true; },
+    hide() { g.visible = false; },
+    update(t) { if (!g.visible) return; ring.scale.setScalar(1 + 0.15 * Math.sin(t * 3)); ring.material.opacity = 0.6 + 0.3 * Math.sin(t * 3); col.material.opacity = 0.55 + 0.2 * Math.sin(t * 2); }
+  };
+})();
+const compass = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.21).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: chevronTexture(false), color: 0xffd08a, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+compass.visible = false; scene.add(compass);
+
+function escortSpeed(r) {
+  if (!guide.active || guide.robot !== r) return 1.3;
+  const lead = (guide.len - guide.s) - r.remaining();
+  if (lead > 8) return 0;
+  if (lead > 4.5) return 0.7;
+  if (lead < 1.2) return 1.8;
+  return 1.3;
+}
+function setGuidePath(p) { guide.path = p; guide.len = pathLen(p); guide.s = 0; ribbon.set(p, 0); }
+function startGuide(key) {
+  const z = ZONES[key], p = playerXZ();
+  if (Math.hypot(p.x - z.x, p.z - z.z) < 2.2) { speak(t('arrivedOther', zoneName(key))); return; }
+  const path = findPath(p.x, p.z, z.x, z.z);
+  if (!path) { speak(t('noPath')); return; }
+  if (guide.active) endGuide();
+  setGuidePath(path);
+  Object.assign(guide, { active: true, zone: key, autoWalk: !xrActive, delay: 1.1, robot: null, end: null });
+  beacon.show(z.x, z.z);
+  const r = robots.filter(r => r.state !== 'walk').sort((a, b) => a.dist(p) - b.dist(p))[0];
+  if (r && r.dist(p) < 12) {
+    const L = guide.len, a = pointAt(path, Math.max(0, L - 2.2)), b = pointAt(path, L);
+    const dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz) || 1;
+    let end = { x: b.x - dx / l * 1.4 - dz / l * 1.0, z: b.z - dz / l * 1.4 + dx / l * 1.0 };
+    if (!navFree(...navCell(end.x, end.z))) end = a;
+    if (r.goTo(end.x, end.z, 'escort')) { guide.robot = r; guide.end = end; }
+  }
+  speak(guide.robot ? t('followMe', zoneName(key)) : t('routeSafe', zoneName(key)), guide.robot || nearestRobot());
+  closeAssistant(); menuPanel.dirty = true;
+}
+function endGuide() {
+  guide.active = false; guide.autoWalk = false;
+  ribbon.mesh.visible = false; compass.visible = false; beacon.hide();
+  if (guide.robot?.mode === 'escort') guide.robot.mode = 'free';
+  menuPanel.dirty = true; assistant.dirty = true;
+}
+function cancelGuide() {
+  const r = guide.robot;
+  endGuide();
+  if (r) r.returnAt = clock.elapsedTime + 1.5;
+  speak(t('guideCancelled'));
+}
+function arrive() {
+  const key = guide.zone, r = guide.robot;
+  endGuide();
+  sfx.chime();
+  if (key === 'vip' && r !== robotVip) {
+    robotVip.greeted = true; robotVip.greetCount++; robotVip.wave();
+    openAssistant('main'); speak(t('arrivedVip'), robotVip);
+  } else speak(t('arrivedOther', zoneName(key)), r || nearestRobot());
+  if (r) r.returnAt = clock.elapsedTime + 7;
+}
+function updateGuide(dt, now) {
+  if (!guide.active) return;
+  const p = playerXZ(), z = ZONES[guide.zone], c = closestOnPath(guide.path, p.x, p.z);
+  guide.s = c.s; guide.delay -= dt;
+  if (c.d > 6 && now - guide.recalc > 1.2) { guide.recalc = now; const np = findPath(p.x, p.z, z.x, z.z); if (np) setGuidePath(np); }
+  if ((guide.timer -= dt) <= 0) { guide.timer = 0.2; ribbon.set(guide.path, guide.s); }
+  if (Math.hypot(p.x - z.x, p.z - z.z) < 1.8) { arrive(); return; }
+  const look = pointAt(guide.path, guide.s + 2.2), dx = look.x - p.x, dz = look.z - p.z, d = Math.hypot(dx, dz);
+  compass.visible = d > 0.6;
+  if (compass.visible) {
+    compass.position.set(p.x + dx / d * 0.9, player.feetY + 0.04, p.z + dz / d * 0.9);
+    compass.rotation.y = Math.atan2(-dz, dx);
+  }
+}
+function guideLookahead(dist) { return guide.active ? pointAt(guide.path, guide.s + dist) : null; }
+function autoWalkSpeed() {
+  if (guide.delay > 0) return 0;
+  const r = guide.robot;
+  if (!r || r.state !== 'walk') return 1.7;
+  const lead = (guide.len - guide.s) - r.remaining();
+  return lead > 0 && lead < 2.6 ? Math.max(0, lead - 1.6) * 1.6 : 1.7;
+}
+
+// ============================================================================
+// Player movement & collision
+// ============================================================================
+function resolveCircle(p, feetY, r) {
+  let hit = false;
+  for (let iter = 0; iter < 3; iter++) {
+    let moved = false;
+    for (const c of colliders) {
+      if (c.maxY <= feetY + STEP || c.minY >= feetY + 1.75) continue;
+      if (c.type === 'box') {
+        const cx = clamp(p.x, c.minX, c.maxX), cz = clamp(p.z, c.minZ, c.maxZ), dx = p.x - cx, dz = p.z - cz, d2 = dx * dx + dz * dz;
+        if (d2 >= r * r) continue;
+        if (d2 > 1e-10) { const d = Math.sqrt(d2); p.x += dx / d * (r - d); p.z += dz / d * (r - d); }
+        else {
+          const l = p.x - c.minX, rt = c.maxX - p.x, b = p.z - c.minZ, f = c.maxZ - p.z, m = Math.min(l, rt, b, f);
+          if (m === l) p.x = c.minX - r; else if (m === rt) p.x = c.maxX + r; else if (m === b) p.z = c.minZ - r; else p.z = c.maxZ + r;
+        }
+        moved = hit = true;
+      } else {
+        let dx = p.x - c.x, dz = p.z - c.z, d = Math.hypot(dx, dz);
+        const min = r + c.r;
+        if (d >= min) continue;
+        if (d < 1e-6) { dx = 1; dz = 0; d = 1; }
+        p.x = c.x + dx / d * min; p.z = c.z + dz / d * min; moved = hit = true;
+      }
+    }
+    for (const rb of robots) {
+      let dx = p.x - rb.pos.x, dz = p.z - rb.pos.z, d = Math.hypot(dx, dz);
+      const min = r + 0.3;
+      if (d < min && Math.abs(rb.pos.y - feetY) < 1) { if (d < 1e-6) { dx = 1; dz = 0; d = 1; } p.x = rb.pos.x + dx / d * min; p.z = rb.pos.z + dz / d * min; moved = hit = true; }
+    }
+    if (!moved) break;
+  }
+  p.x = clamp(p.x, BOUNDS.x0, BOUNDS.x1); p.z = clamp(p.z, BOUNDS.z0, BOUNDS.z1);
+  return hit;
+}
+function clearSpot(x, z, y) { const p = { x, z }; resolveCircle(p, y, 0.3); return Math.hypot(p.x - x, p.z - z) < 0.02 && inBounds(x, z); }
+let jumpReq = false;
+function updateVertical(x, z, dt) {
+  const ground = surfaceAt(x, z, player.feetY + STEP);
+  if (jumpReq && player.onGround && !xrActive) { player.vy = 4.4; player.onGround = false; }
+  jumpReq = false;
+  if (player.onGround && player.vy <= 0) {
+    const diff = player.feetY - ground;
+    if (diff <= STEP) { player.stepOffset += diff; player.feetY = ground; player.vy = 0; }
+    else player.onGround = false;
+  }
+  if (!player.onGround) {
+    player.vy -= 9.81 * dt; player.feetY += player.vy * dt;
+    if (player.feetY <= ground) { player.feetY = ground; player.vy = 0; player.onGround = true; }
+  }
+  player.stepOffset = damp(player.stepOffset, 0, 12, dt);
+}
+
+// ---------- desktop ----------
+const keys = {};
+const joy = { x: 0, y: 0, id: null };
+let deskHeld = null, deskSwing = -1;
+function updateDesktop(dt) {
+  let f = 0, r = 0;
+  if (keys.KeyW || keys.ArrowUp) f += 1;
+  if (keys.KeyS || keys.ArrowDown) f -= 1;
+  if (keys.KeyD || keys.ArrowRight) r += 1;
+  if (keys.KeyA || keys.ArrowLeft) r -= 1;
+  f -= joy.y; r += joy.x;
+  if (Math.hypot(f, r) > 0.05) guide.autoWalk = false;
+  let speed = keys.ShiftLeft || keys.ShiftRight ? 4.6 : 2.6;
+  const pos = rig.position;
+  if (guide.active && guide.autoWalk) {
+    const tg = guideLookahead(2), dx = tg.x - pos.x, dz = tg.z - pos.z;
+    if (Math.hypot(dx, dz) > 0.2) player.yaw = dampAngle(player.yaw, Math.atan2(-dx, -dz), 3.2, dt);
+    speed = autoWalkSpeed(); f = 1; r = 0;
+  }
+  const l = Math.hypot(f, r); if (l > 1) { f /= l; r /= l; }
+  const sy = Math.sin(player.yaw), cy = Math.cos(player.yaw), tx = (-sy * f + cy * r) * speed, tz = (-cy * f - sy * r) * speed;
+  const k = player.onGround ? (l > 0.01 ? 10 : 8) : 1.5;
+  player.vel.x = damp(player.vel.x, tx, k, dt); player.vel.z = damp(player.vel.z, tz, k, dt);
+  const ox = pos.x, oz = pos.z, dx = player.vel.x * dt, dz = player.vel.z * dt, n = Math.max(1, Math.ceil(Math.hypot(dx, dz) / 0.12));
+  for (let i = 0; i < n; i++) { pos.x += dx / n; pos.z += dz / n; resolveCircle(pos, player.feetY, PLAYER_R); }
+  player.vel.x = (pos.x - ox) / dt; player.vel.z = (pos.z - oz) / dt;
+  updateVertical(pos.x, pos.z, dt);
+  pos.y = player.feetY;
+  const sp = Math.hypot(player.vel.x, player.vel.z);
+  if (player.onGround && sp > 0.3) player.bob += dt * sp * 3.4;
+  const bobAmp = player.onGround ? Math.min(1, sp / 2.6) : 0;
+  rig.rotation.y = player.yaw;
+  camera.position.set(0, EYE + player.stepOffset + Math.sin(player.bob * 2) * 0.03 * bobAmp, 0);
+  camera.rotation.set(player.pitch, 0, Math.sin(player.bob) * 0.006 * bobAmp);
+}
+
+// ---------- XR ----------
+const _v = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q = new THREE.Quaternion(), _m4 = new THREE.Matrix4(), _s = new THREE.Vector3();
+function headWorld(out) { return out.copy(camera.position).applyMatrix4(rig.matrixWorld); }
+function rotateRig(angle) {
+  rig.updateMatrixWorld(true);
+  const before = headWorld(new THREE.Vector3());
+  rig.rotation.y += angle;
+  rig.updateMatrixWorld(true);
+  const after = headWorld(new THREE.Vector3());
+  rig.position.x += before.x - after.x; rig.position.z += before.z - after.z;
+  rig.updateMatrixWorld(true);
+}
+let vigTarget = 0;
+function updateXRMovement(dt, mx, my, sprint) {
+  const m = Math.hypot(mx, my); let tx = 0, tz = 0;
+  if (m > 0.15) {
+    const k = Math.min(1, (m - 0.15) / 0.85) * (sprint ? 3.0 : 1.9) / m, s = Math.sin(head.yaw), c = Math.cos(head.yaw), f = -my, r = mx;
+    tx = (-s * f + c * r) * k; tz = (-c * f - s * r) * k;
+  }
+  player.vel.x = damp(player.vel.x, tx, 14, dt); player.vel.z = damp(player.vel.z, tz, 14, dt);
+  rig.position.x += player.vel.x * dt; rig.position.z += player.vel.z * dt;
+  rig.updateMatrixWorld(true);
+  const hw = headWorld(_v), p = { x: hw.x, z: hw.z };
+  resolveCircle(p, player.feetY, PLAYER_R);   // also pushes back when walking physically into walls
+  rig.position.x += p.x - hw.x; rig.position.z += p.z - hw.z;
+  updateVertical(p.x, p.z, dt);
+  rig.position.y = player.feetY + player.stepOffset + (settings.seated ? SEAT_OFFSET : 0);
+  vigTarget = Math.max(vigTarget, clamp(Math.hypot(player.vel.x, player.vel.z) / 2.2, 0, 1) * 0.85);
+}
+
+// ---------- teleport arc ----------
+const arc = (() => {
+  const N = 40;
+  const dots = new THREE.InstancedMesh(new THREE.SphereGeometry(0.016, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), N);
+  dots.frustumCulled = false; dots.visible = false; scene.add(dots);
+  const reticle = new THREE.Group(); reticle.visible = false; scene.add(reticle);
+  const rmat = new THREE.MeshBasicMaterial({ color: 0x7fe8ff, transparent: true, opacity: 0.9, toneMapped: false, depthWrite: false });
+  reticle.add(new THREE.Mesh(new THREE.RingGeometry(0.26, 0.32, 40).rotateX(-Math.PI / 2), rmat));
+  reticle.add(new THREE.Mesh(new THREE.CircleGeometry(0.08, 24).rotateX(-Math.PI / 2), rmat));
+  return { N, dots, reticle, valid: false, point: new THREE.Vector3() };
+})();
+function updateArc(h) {
+  const o = _v.setFromMatrixPosition(h.ray.matrixWorld), dir = _v2.set(0, 0, -1).transformDirection(h.ray.matrixWorld);
+  const pts = [o.clone()], vel = dir.clone().multiplyScalar(7.5), p = o.clone();
+  let hit = null;
+  for (let i = 0; i < 80 && !hit; i++) {
+    const np = p.clone().addScaledVector(vel, 0.03); vel.y -= 9.8 * 0.03;
+    const top = topUnder(np.x, np.z, np.y);
+    if (np.y <= top) { np.y = top; hit = np; }
+    pts.push(np); p.copy(np);
+    if (np.y < -1) break;
+  }
+  arc.valid = !!hit && hit.y <= 0.62 && clearSpot(hit.x, hit.z, hit.y);
+  if (hit) arc.point.copy(hit);
+  const color = new THREE.Color(arc.valid ? 0x7fe8ff : 0xff6b6b), mtx = new THREE.Matrix4(), n = Math.min(arc.N, pts.length), stride = pts.length / n;
+  for (let i = 0; i < n; i++) { mtx.makeTranslation(pts[Math.floor(i * stride)]); arc.dots.setMatrixAt(i, mtx); arc.dots.setColorAt(i, color); }
+  arc.dots.count = n; arc.dots.instanceMatrix.needsUpdate = true; if (arc.dots.instanceColor) arc.dots.instanceColor.needsUpdate = true;
+  arc.dots.visible = true;
+  arc.reticle.visible = arc.valid;
+  if (arc.valid) arc.reticle.position.set(hit.x, hit.y + 0.02, hit.z);
+}
+function hideArc() { arc.dots.visible = false; arc.reticle.visible = false; }
+
+// ---------- fade + comfort vignette (sphere attached to the head) ----------
+const vigU = { uVig: { value: 0 }, uFade: { value: 0 } };
+const vignette = new THREE.Mesh(new THREE.SphereGeometry(0.25, 24, 16), new THREE.ShaderMaterial({
+  uniforms: vigU, transparent: true, depthTest: false, depthWrite: false, side: THREE.BackSide,
+  vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform float uVig, uFade; varying vec3 vP;
+    void main(){
+      vec3 d = normalize(vP); float ang = acos(clamp(-d.z, -1.0, 1.0));
+      float v = uVig > 0.001 ? smoothstep(mix(1.25, 0.42, uVig), mix(1.6, 0.95, uVig), ang) : 0.0;
+      float a = max(v, uFade); if (a < 0.003) discard;
+      gl_FragColor = vec4(0.0, 0.0, 0.0, a);
+    }`
+}));
+vignette.renderOrder = 1000; vignette.frustumCulled = false; camera.add(vignette);
+const fade = { phase: 0, t: 0, x: 0, z: 0, onMid: null };
+function teleportTo(x, z, onMid) {
+  if (fade.phase) return;
+  Object.assign(fade, { phase: 1, t: 0, x, z, onMid, yaw: Math.atan2(-(x - head.pos.x), -(z - head.pos.z)) });
+}
+function doTeleport() {
+  const y = surfaceAt(fade.x, fade.z, 0.7);
+  if (xrActive) { rig.updateMatrixWorld(true); const hw = headWorld(_v); rig.position.x += fade.x - hw.x; rig.position.z += fade.z - hw.z; }
+  else { rig.position.x = fade.x; rig.position.z = fade.z; player.yaw = fade.yaw; }
+  player.feetY = y; player.vy = 0; player.onGround = true; player.stepOffset = 0; player.vel.set(0, 0, 0);
+  rig.position.y = y + (xrActive && settings.seated ? SEAT_OFFSET : 0);
+  fade.onMid?.();
+  sfx.teleport();
+}
+function updateFade(dt) {
+  if (fade.phase === 1) { fade.t += dt / 0.12; if (fade.t >= 1) { fade.t = 1; doTeleport(); fade.phase = 2; } }
+  else if (fade.phase === 2) { fade.t -= dt / 0.2; if (fade.t <= 0) { fade.t = 0; fade.phase = 0; } }
+  vigU.uFade.value = fade.t;
+  vigU.uVig.value = settings.vignette && xrActive ? damp(vigU.uVig.value, vigTarget, 8, dt) : 0;
+  vigTarget = 0;
+  vignette.visible = vigU.uVig.value > 0.002 || vigU.uFade.value > 0.002;
+}
+function hopRoute() {
+  if (!guide.active) { showToast(t('noRoute')); return; }
+  for (let k = 0; k < 5; k++) {
+    const q = pointAt(guide.path, Math.min(guide.len, guide.s + 6 - k));
+    if (clearSpot(q.x, q.z, surfaceAt(q.x, q.z, 0.7))) { teleportTo(q.x, q.z); return; }
+  }
+}
+function jumpToDestination() {
+  if (!guide.active) { showToast(t('noRoute')); return; }
+  const z = ZONES[guide.zone], r = guide.robot, end = guide.end;
+  teleportTo(z.x, z.z, () => { if (r && end) r.stopAt(end.x, end.z); });
+}
+
+// ============================================================================
+// Grabbing & throwing
+// ============================================================================
+const DESK_OFFSET = new THREE.Matrix4().makeTranslation(0.24, -0.22, -0.55);
+const DIST_OFFSET = new THREE.Matrix4().makeTranslation(0, -0.01, -0.07);
+function grabItem(item, holder) {
+  if (item.held) releaseItem(item);
+  item.held = holder;
+  const b = item.body;
+  b.type = CANNON.Body.KINEMATIC; b.velocity.setZero(); b.angularVelocity.setZero(); b.wakeUp();
+  item.pull = 0; item.pullFromP = item.object.position.clone(); item.pullFromQ = item.object.quaternion.clone();
+  if (holder.type === 'xr') {
+    const h = holder.h, anchor = h.grip.visible ? h.grip : h.ray;
+    anchor.updateMatrixWorld(true);
+    holder.anchor = anchor;
+    if (item.gripRot) holder.offset = item.gripRot;
+    else if (holder.near) { holder.offset = anchor.matrixWorld.clone().invert().multiply(item.object.matrixWorld); item.pull = 1; }
+    else holder.offset = DIST_OFFSET;
+    h.held = item; pulse(h, 0.6, 40);
+  } else deskHeld = item;
+  item.prevPos.copy(item.object.position); item.prevQuat.copy(item.object.quaternion);
+  item.vel.set(0, 0, 0); item.angVel.set(0, 0, 0);
+  setHL(item, false); sfx.grab();
+}
+function releaseItem(item, extraVel) {
+  if (!item.held) return;
+  const b = item.body, v = item.vel.clone();
+  if (extraVel) v.add(extraVel);
+  if (v.length() > 12) v.setLength(12);
+  b.type = CANNON.Body.DYNAMIC;
+  b.velocity.set(v.x, v.y, v.z); b.angularVelocity.set(item.angVel.x, item.angVel.y, item.angVel.z); b.wakeUp();
+  if (item.held.type === 'xr') item.held.h.held = null; else { deskHeld = null; deskSwing = -1; }
+  item.held = null;
+}
+function deskTarget(item, out) {
+  if (item.kind === 'putter') {
+    const s = Math.sin(player.yaw), c = Math.cos(player.yaw), sw = deskSwing >= 0 ? Math.sin(Math.PI * Math.min(1, deskSwing)) * 0.3 : 0;
+    _v.set(rig.position.x - s * (0.5 + sw), player.feetY + 0.9 - PUTTER_COM, rig.position.z - c * (0.5 + sw));
+    _q.setFromAxisAngle(THREE.Object3D.DEFAULT_UP, player.yaw);
+    return out.compose(_v, _q, _s.set(1, 1, 1));
+  }
+  camera.updateMatrixWorld(true);
+  return out.multiplyMatrices(camera.matrixWorld, DESK_OFFSET);
+}
+function updateHeld(dt) {
+  if (deskSwing >= 0) { deskSwing += dt / 0.35; if (deskSwing > 1) deskSwing = -1; }
+  for (const item of items) {
+    if (!item.held) continue;
+    const hd = item.held;
+    if (hd.type === 'xr') _m4.multiplyMatrices(hd.anchor.matrixWorld, hd.offset); else deskTarget(item, _m4);
+    const p = new THREE.Vector3(), q = new THREE.Quaternion();
+    _m4.decompose(p, q, _s);
+    if (item.pull < 1) {
+      item.pull = Math.min(1, item.pull + dt / 0.2);
+      const k = 1 - (1 - item.pull) ** 3;
+      p.lerpVectors(item.pullFromP, p, k); q.slerpQuaternions(item.pullFromQ, q, k);
+    }
+    const idt = 1 / Math.max(dt, 1e-3);
+    item.vel.lerp(_v.copy(p).sub(item.prevPos).multiplyScalar(idt), 0.5);
+    const dq = q.clone().multiply(item.prevQuat.clone().invert());
+    if (dq.w < 0) { dq.x = -dq.x; dq.y = -dq.y; dq.z = -dq.z; dq.w = -dq.w; }
+    const ang = 2 * Math.acos(clamp(dq.w, -1, 1)), sn = Math.sqrt(Math.max(1e-8, 1 - dq.w * dq.w));
+    item.angVel.lerp(_v2.set(dq.x / sn, dq.y / sn, dq.z / sn).multiplyScalar(ang > 1e-4 ? ang * idt : 0), 0.5);
+    item.prevPos.copy(p); item.prevQuat.copy(q);
+    item.object.position.copy(p); item.object.quaternion.copy(q);
+    item.body.position.set(p.x, p.y, p.z); item.body.quaternion.set(q.x, q.y, q.z, q.w);
+    item.body.velocity.set(item.vel.x, item.vel.y, item.vel.z);
+  }
+}
+function nearestItem(pos, maxD) {
+  let best = null, bd = maxD;
+  for (const it of items) {
+    if (it.held || it.sinking) continue;
+    let d;
+    if (it.kind === 'putter') {
+      const dir = _v2.set(0, -1, 0).applyQuaternion(it.object.quaternion), a = it.object.position.clone().addScaledVector(dir, -PUTTER_COM);
+      const k = clamp(_v.copy(pos).sub(a).dot(dir), 0, 0.9);
+      d = _v.copy(a).addScaledVector(dir, k).distanceTo(pos) - 0.03;
+    } else d = it.object.position.distanceTo(pos) - it.radius;
+    if (d < bd) { bd = d; best = it; }
+  }
+  return best;
+}
+function updateItems(now) {
+  for (const it of [...items]) {
+    if (it.held) continue;
+    if (it.sinking) {
+      it.sinking -= 1 / 60;
+      it.object.position.y = damp(it.object.position.y, -0.06, 6, 1 / 60);
+      if (it.sinking <= 0) respawn(it);
+      continue;
+    }
+    syncItem(it);
+    const bp = it.body.position;
+    if (bp.y < -3 || !inBounds(bp.x, bp.z, 2)) { it.kind === 'served' ? removeItem(it) : respawn(it); continue; }
+    if (it.kind === 'golf') {
+      const v = it.body.velocity, d = Math.hypot(bp.x - golf.hole.x, bp.z - golf.hole.z);
+      if (d < 0.06 && v.length() < 1.6 && bp.y < 0.06) {
+        it.sinking = 1.2; it.body.type = CANNON.Body.KINEMATIC; it.body.velocity.setZero(); it.body.angularVelocity.setZero();
+        it.body.position.set(golf.hole.x, -0.03, golf.hole.z); it.object.position.set(golf.hole.x, 0.02, golf.hole.z);
+        speak(t('golfSunk', Math.max(1, golf.strokes))); golf.strokes = 0; sfx.chime();
+      }
+    }
+    // the player's legs nudge balls lying around
+    if ((it.kind === 'ball' || it.kind === 'golf') && bp.y < player.feetY + 0.6 && now - it.lastKick > 0.25) {
+      const p = playerXZ(), dx = bp.x - p.x, dz = bp.z - p.z, d = Math.hypot(dx, dz), sp = Math.hypot(player.vel.x, player.vel.z);
+      if (d < PLAYER_R + it.radius + 0.05 && d > 1e-4) {
+        const push = 0.6 + sp * 1.1;
+        it.body.velocity.set(dx / d * push, it.kind === 'ball' ? 0.8 + sp * 0.3 : 0, dz / d * push);
+        it.body.wakeUp(); it.lastKick = now;
+      }
+    }
+  }
+  golf.flag.rotation.y = Math.sin(now * 1.7) * 0.25;
+}
+
+// ============================================================================
+// Pointing (VR controllers, mouse/crosshair, touch)
+// ============================================================================
+const raycaster = new THREE.Raycaster();
+function rayBlocker(o, d) {
+  let best = Infinity;
+  for (const c of colliders) {
+    if (c.maxY < 0.45) continue;
+    const mnX = c.type === 'box' ? c.minX : c.x - c.r, mxX = c.type === 'box' ? c.maxX : c.x + c.r;
+    const mnZ = c.type === 'box' ? c.minZ : c.z - c.r, mxZ = c.type === 'box' ? c.maxZ : c.z + c.r;
+    let t0 = 0, t1 = best;
+    for (const [oo, dd, mn, mx] of [[o.x, d.x, mnX, mxX], [o.y, d.y, c.minY, c.maxY], [o.z, d.z, mnZ, mxZ]]) {
+      if (Math.abs(dd) < 1e-9) { if (oo < mn || oo > mx) { t0 = Infinity; break; } continue; }
+      let a = (mn - oo) / dd, b = (mx - oo) / dd; if (a > b) [a, b] = [b, a];
+      t0 = Math.max(t0, a); t1 = Math.min(t1, b); if (t0 > t1) break;
+    }
+    if (t0 <= t1 && t0 > 0.05 && t0 < best) best = t0;
+  }
+  return best;
+}
+function pointerQuery(origin, dir, maxDist = 12) {
+  raycaster.set(origin, dir); raycaster.far = maxDist;
+  const vis = panels.filter(p => p.interactive && p.visible).map(p => p.mesh);
+  const ph = vis.length ? raycaster.intersectObjects(vis, false) : [];
+  if (ph.length) { const h = ph[0], panel = h.object.userData.panel; return { kind: 'panel', panel, btn: panel.hit(h.uv), point: h.point, distance: h.distance }; }
+  const hits = raycaster.intersectObjects(pickables, true);
+  if (!hits.length) return null;
+  const h = hits[0];
+  if (h.distance > rayBlocker(origin, dir)) return null;
+  let o = h.object; while (o && !o.userData.item && !o.userData.robot) o = o.parent;
+  if (!o) return null;
+  return o.userData.robot ? { kind: 'robot', robot: o.userData.robot, point: h.point, distance: h.distance } : { kind: 'item', item: o.userData.item, point: h.point, distance: h.distance };
+}
+function pulse(h, s, ms) { try { h.source?.gamepad?.hapticActuators?.[0]?.pulse(s, ms); } catch { /* no haptics */ } }
+
+const controllerModels = new XRControllerModelFactory(), handModels = new XRHandModelFactory();
+const lineGeo = new THREE.CylinderGeometry(0.0025, 0.0025, 1, 6).rotateX(-Math.PI / 2).translate(0, 0, -0.5);
+const hands = [0, 1].map(i => {
+  const ray = renderer.xr.getController(i), grip = renderer.xr.getControllerGrip(i), hand = renderer.xr.getHand(i);
+  grip.add(controllerModels.createControllerModel(grip));
+  hand.add(handModels.createHandModel(hand, 'mesh'));
+  rig.add(ray, grip, hand);
+  const line = new THREE.Mesh(lineGeo, new THREE.MeshBasicMaterial({ color: 0xffd89b, transparent: true, opacity: 0.75, toneMapped: false, depthWrite: false }));
+  ray.add(line);
+  const cursor = new THREE.Mesh(new THREE.RingGeometry(0.008, 0.014, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: false, transparent: true, toneMapped: false }));
+  cursor.renderOrder = 40; cursor.visible = false; scene.add(cursor);
+  const h = { i, ray, grip, hand, line, cursor, source: null, handedness: '', isHand: false, prev: [], held: null, teleporting: false, snapReady: true, hoverKey: null };
+  ray.addEventListener('connected', e => { h.source = e.data; h.handedness = e.data.handedness; h.isHand = !!e.data.hand; });
+  ray.addEventListener('disconnected', () => { if (h.held) releaseItem(h.held); h.source = null; h.handedness = ''; cursor.visible = false; });
+  ray.addEventListener('selectstart', () => onSelectStart(h));
+  ray.addEventListener('selectend', () => { if (h.held?.held?.by === 'select') releaseItem(h.held); });
+  ray.addEventListener('squeezestart', () => onSqueezeStart(h));
+  ray.addEventListener('squeezeend', () => { if (h.held?.held?.by === 'squeeze') releaseItem(h.held); });
+  return h;
+});
+const handPos = h => (h.grip.visible ? h.grip : h.ray).getWorldPosition(new THREE.Vector3());
+function handRay(h) {
+  const o = new THREE.Vector3().setFromMatrixPosition(h.ray.matrixWorld), d = new THREE.Vector3(0, 0, -1).transformDirection(h.ray.matrixWorld);
+  return pointerQuery(o, d);
+}
+function onSelectStart(h) {
+  if (!started || h.held) return;
+  sfx.init();
+  const near = nearestItem(handPos(h), 0.12);
+  if (near) { grabItem(near, { type: 'xr', h, near: true, by: 'select' }); return; }
+  const hit = handRay(h);
+  if (hit?.kind === 'panel') { if (hit.btn) { hit.panel.press(hit.btn); sfx.click(); pulse(h, 0.5, 35); } return; }
+  if (hit?.kind === 'robot') { talkTo(hit.robot); pulse(h, 0.4, 30); return; }
+  if (hit?.kind === 'item' && hit.distance < 8) { grabItem(hit.item, { type: 'xr', h, near: false, by: 'select' }); return; }
+  if (h.isHand && h.handedness === 'left') toggleMenu();
+}
+function onSqueezeStart(h) {
+  if (!started || h.held) return;
+  const near = nearestItem(handPos(h), 0.14);
+  if (near) { grabItem(near, { type: 'xr', h, near: true, by: 'squeeze' }); return; }
+  const hit = handRay(h);
+  if (hit?.kind === 'item' && hit.distance < 8) grabItem(hit.item, { type: 'xr', h, near: false, by: 'squeeze' });
+}
+function updateXRInput(dt) {
+  let mx = 0, my = 0, sprint = false;
+  for (const h of hands) {
+    const gp = h.source?.gamepad;
+    if (!gp) continue;
+    const pressed = i => !!gp.buttons[i]?.pressed;
+    const edge = i => { const p = pressed(i), was = h.prev[i]; h.prev[i] = p; return p && !was; };
+    const sx = gp.axes[2] ?? gp.axes[0] ?? 0, sy = gp.axes[3] ?? gp.axes[1] ?? 0;
+    if (h.handedness === 'left') {
+      mx = sx; my = sy; sprint = pressed(3);
+      if (edge(4)) toggleMenu();
+      if (edge(5)) toggleAssistant();
+    } else if (h.handedness === 'right') {
+      if (!h.teleporting && !h.held && sy < -0.65 && Math.abs(sx) < 0.55) h.teleporting = true;
+      if (h.teleporting) {
+        updateArc(h);
+        if (sy > -0.3) { h.teleporting = false; hideArc(); if (arc.valid) { teleportTo(arc.point.x, arc.point.z); pulse(h, 0.4, 30); } }
+      } else if (settings.snapTurn) {
+        if (Math.abs(sx) > 0.7 && h.snapReady) { h.snapReady = false; rotateRig(-Math.sign(sx) * Math.PI / 4); pulse(h, 0.2, 15); }
+        if (Math.abs(sx) < 0.3) h.snapReady = true;
+      } else if (Math.abs(sx) > 0.15) { rotateRig(-sx * 1.9 * dt); vigTarget = Math.max(vigTarget, Math.abs(sx) * 0.7); }
+      if (edge(4)) hopRoute();
+      if (edge(5)) recenterPanels();
+    }
+  }
+  updateXRMovement(dt, mx, my, sprint);
+}
+
+// hover state for panels, items and pointer visuals
+const mouse = { x: 0, y: 0, has: false };
+const ndc = new THREE.Vector2();
+function desktopRay() {
+  if (document.pointerLockElement === renderer.domElement || !mouse.has) ndc.set(0, 0);
+  else ndc.set(mouse.x / innerWidth * 2 - 1, -(mouse.y / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  return { o: raycaster.ray.origin.clone(), d: raycaster.ray.direction.clone() };
+}
+function updatePointers() {
+  const hover = new Map(), hl = new Set();
+  if (xrActive) {
+    for (const h of hands) {
+      const active = !!h.source && !h.teleporting && !h.held && h.ray.visible;
+      h.line.visible = active; h.cursor.visible = false;
+      if (!active) continue;
+      const near = nearestItem(handPos(h), 0.14);
+      if (near) { hl.add(near); h.line.scale.z = 0.25; continue; }
+      const hit = handRay(h);
+      h.line.scale.z = hit ? hit.distance : 3;
+      if (hit) {
+        h.cursor.visible = true; h.cursor.position.copy(hit.point); h.cursor.lookAt(head.pos);
+        if (hit.kind === 'panel' && hit.btn) hover.set(hit.panel, hit.btn.id);
+        if (hit.kind === 'item' && hit.distance < 8) hl.add(hit.item);
+      }
+      const key = hit?.kind === 'panel' ? hit.btn?.id : hit?.kind === 'item' ? 'item' : null;
+      if (key && key !== h.hoverKey) { pulse(h, 0.12, 12); sfx.hover(); }
+      h.hoverKey = key;
+    }
+  } else if (started) {
+    const { o, d } = desktopRay(), hit = pointerQuery(o, d);
+    if (hit?.kind === 'panel' && hit.btn) hover.set(hit.panel, hit.btn.id);
+    if (hit?.kind === 'item' && hit.distance < 3.6 && !deskHeld) hl.add(hit.item);
+    renderer.domElement.style.cursor = (hit?.kind === 'panel' && hit.btn) || hit?.kind === 'robot' || (hit?.kind === 'item' && hit.distance < 3.6) ? 'pointer' : '';
+  }
+  for (const p of panels) p.setHover(hover.get(p) ?? null);
+  for (const it of items) setHL(it, hl.has(it));
+}
+
+// ============================================================================
+// Panel placement (lazy follow so text stays readable without being head-locked)
+// ============================================================================
+function placeFollow(panel, cfg, dt) {
+  const ang = head.yaw + cfg.ang;
+  _v.set(head.pos.x - Math.sin(ang) * cfg.dist, head.pos.y + cfg.y, head.pos.z - Math.cos(ang) * cfg.dist);
+  if (!panel.placed) { panel.target.copy(_v); panel.mesh.position.copy(_v); panel.placed = true; }
+  else {
+    const cur = Math.atan2(-(panel.target.x - head.pos.x), -(panel.target.z - head.pos.z));
+    if (!cfg.slack || panel.target.distanceTo(_v) > cfg.slack || Math.abs(angDiff(cur, ang)) > cfg.angSlack) panel.target.copy(_v);
+    panel.mesh.position.lerp(panel.target, 1 - Math.exp(-(cfg.slack ? 4 : 10) * dt));
+  }
+  panel.mesh.lookAt(head.pos);
+}
+function recenterPanels() { for (const p of panels) p.placed = false; }
+function updatePanels(dt) {
+  const narrow = camera.aspect < 1;
+  if (assistant.visible) placeFollow(assistant, xrActive ? { dist: 1.15, y: -0.2, ang: -0.3, slack: 0.45, angSlack: 0.7 } : narrow ? { dist: 1.9, y: -0.12, ang: 0 } : { dist: 1.3, y: -0.06, ang: -0.42 }, dt);
+  if (menuPanel.visible) {
+    const lh = xrActive && hands.find(h => h.handedness === 'left' && h.grip.visible);
+    if (lh) {
+      const gp = lh.grip.getWorldPosition(_v2), right = _v.set(Math.cos(head.yaw), 0, -Math.sin(head.yaw));
+      menuPanel.mesh.position.lerp(_v2.add(_v.set(0, 0.26, 0)).addScaledVector(right, 0.1), 1 - Math.exp(-25 * dt));
+      menuPanel.mesh.lookAt(head.pos); menuPanel.placed = true;
+    } else placeFollow(menuPanel, xrActive ? { dist: 0.8, y: -0.25, ang: 0.35, slack: 0.3, angSlack: 0.6 } : narrow ? { dist: 0.95, y: -0.02, ang: 0 } : { dist: 0.75, y: -0.02, ang: 0.55 }, dt);
+  }
+  if (toast.visible) {
+    toast.life -= dt;
+    toast.mesh.material.opacity = clamp(toast.life / 0.6, 0, 1);
+    if (toast.life <= 0) toast.mesh.visible = false;
+    placeFollow(toast, xrActive ? { dist: 1.5, y: -0.45, ang: 0, slack: 0.3, angSlack: 0.5 } : { dist: 1.4, y: -0.36, ang: 0 }, dt);
+  }
+  for (const p of panels) {
+    if (p.flashT > 0 && (p.flashT -= dt) <= 0) { p.flash = null; p.dirty = true; }
+    if (p.visible && p.dirty) p.render();
+  }
+}
+
+// ============================================================================
+// Greetings, world animation, sun, HUD
+// ============================================================================
+function greetings() {
+  if (!started) return;
+  const p = playerXZ();
+  for (const r of robots) {
+    const d = r.dist(p);
+    if (!r.greeted && d < (r.id === 'reception' ? 5.5 : 4.5) && r.state !== 'walk' && !(guide.active && guide.robot === r)) {
+      r.greeted = true; r.wave(); openAssistant('main');
+      speak(r.greetCount++ ? t('assistantShort') : r.id === 'reception' ? t('assistantIntro') : t('arrivedVip'), r);
+    }
+    if (r.greeted && d > 16 && !guide.active) r.greeted = false;
+  }
+}
+function animateWorld(now, dt) {
+  waterNormal.offset.set(now * 0.012, now * 0.008);
+  for (const j of fountain.jets) j.mesh.scale.y = 1 + Math.sin(now * 3 + j.phase) * 0.08;
+  sky.position.copy(head.pos);
+  for (const s of signs) if (s.billboard) s.mesh.rotation.y = Math.atan2(head.pos.x - s.mesh.position.x, head.pos.z - s.mesh.position.z);
+}
+function updateSun() {
+  const cx = Math.round(head.pos.x), cz = Math.round(head.pos.z);
+  sun.target.position.set(cx, 0, cz);
+  sun.position.set(cx + SUN_DIR.x * 90, SUN_DIR.y * 90, cz + SUN_DIR.z * 90);
+}
+let hudT = 0;
+function hudTick(dt) {
+  if ((hudT -= dt) > 0) return;
+  hudT = 0.4;
+  $('zoneBadge').textContent = locationLabel();
+  if (menuPanel.visible) menuPanel.dirty = true;
+}
+
+// ============================================================================
+// Settings, language, reset
+// ============================================================================
+function applySettings() {
+  if (renderer.shadowMap.enabled !== settings.shadows) {
+    renderer.shadowMap.enabled = settings.shadows; sun.castShadow = settings.shadows;
+    scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => { m.needsUpdate = true; }); });
+  }
+  if (!settings.voice && 'speechSynthesis' in window) speechSynthesis.cancel();
+}
+let xrStatusKey = 'vrChecking';
+function refreshTexts() {
+  document.documentElement.lang = settings.lang;
+  $('ovIntro').textContent = t('intro');
+  $('btnVR').textContent = t('enterVR');
+  $('btnDesk').textContent = started ? t('resume') : t('explore');
+  $('xrStatus').textContent = t(xrStatusKey);
+  $('ctlVRTitle').textContent = t('controlsVR');
+  $('ctlDeskTitle').textContent = t('controlsDesk');
+  $('ctlVR').replaceChildren(...t('ctlVR').map(s => Object.assign(document.createElement('li'), { textContent: s })));
+  $('ctlDesk').replaceChildren(...t('ctlDesk').map(s => Object.assign(document.createElement('li'), { textContent: s })));
+  $('help').textContent = t('deskHelp');
+  $('hudMenu').textContent = t('hudMenu');
+  $('hudAssistant').textContent = t('hudAssistant');
+  document.querySelectorAll('#langs button').forEach(b => b.classList.toggle('on', b.dataset.lang === settings.lang));
+  $('zoneBadge').textContent = locationLabel();
+  signs.forEach(drawSign);
+  panels.forEach(p => { p.dirty = true; });
+}
+function setLang(l) {
+  settings.lang = l; saveSettings(); ui.message = ''; refreshTexts();
+  if (started) speak(t('assistantShort'));
+}
+function placePlayerAtSpawn() {
+  player.vel.set(0, 0, 0); player.vy = 0; player.feetY = 0; player.stepOffset = 0; player.onGround = true; player.pitch = 0; player.yaw = SPAWN.yaw;
+  if (xrActive) {
+    rig.updateMatrixWorld(true);
+    rotateRig(angDiff(SPAWN.yaw, head.yaw));
+    const hw = headWorld(_v);
+    rig.position.x += SPAWN.x - hw.x; rig.position.z += SPAWN.z - hw.z; rig.position.y = settings.seated ? SEAT_OFFSET : 0;
+  } else { rig.position.set(SPAWN.x, 0, SPAWN.z); rig.rotation.y = SPAWN.yaw; }
+}
+function resetExperience() {
+  endGuide();
+  if (deskHeld) releaseItem(deskHeld);
+  hands.forEach(h => h.held && releaseItem(h.held));
+  for (const r of robots) { r.stopAt(r.home.x, r.home.z); r.yaw = r.faceYaw = r.homeYaw; r.greeted = false; r.greetCount = 0; r.returnAt = 0; }
+  for (const it of [...items]) it.kind === 'served' ? removeItem(it) : respawn(it);
+  for (const k in cart) delete cart[k];
+  golf.strokes = 0;
+  ui.page = 'main'; ui.message = '';
+  closeAssistant(); closeMenu();
+  placePlayerAtSpawn();
+  showToast(t('resetMsg'));
+}
+
+// ============================================================================
+// Input wiring
+// ============================================================================
+const canvas = renderer.domElement;
+const overlayOpen = () => !$('overlay').classList.contains('hidden');
+function deskClick(scr) {
+  if (scr) mouse.x = scr.x, mouse.y = scr.y, mouse.has = true;
+  const { o, d } = desktopRay(), hit = pointerQuery(o, d);
+  if (hit?.kind === 'panel') { if (hit.btn) { hit.panel.press(hit.btn); sfx.click(); } return true; }
+  if (deskHeld) {
+    if (deskHeld.kind === 'putter') { if (deskSwing < 0) deskSwing = 0; }
+    else { releaseItem(deskHeld, d.multiplyScalar(7.5)); sfx.whoosh(); }
+    return true;
+  }
+  if (hit?.kind === 'robot') { talkTo(hit.robot); return true; }
+  if (hit?.kind === 'item' && hit.distance < 3.6) { grabItem(hit.item, { type: 'desk' }); return true; }
+  return false;
+}
+function deskGrabToggle() {
+  if (deskHeld) { releaseItem(deskHeld); return; }
+  const { o, d } = desktopRay(), hit = pointerQuery(o, d);
+  if (hit?.kind === 'item' && hit.distance < 3.6) grabItem(hit.item, { type: 'desk' });
+}
+const ptr = { id: null, x: 0, y: 0, moved: 0, type: 'mouse', button: 0 };
+canvas.addEventListener('pointerdown', e => {
+  if (xrActive || !started) return;
+  sfx.init();
+  if (document.pointerLockElement === canvas) { if (e.button === 0) deskClick(null); else if (e.button === 2 && deskHeld) releaseItem(deskHeld); return; }
+  Object.assign(ptr, { id: e.pointerId, x: e.clientX, y: e.clientY, moved: 0, type: e.pointerType, button: e.button });
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+  if (document.pointerLockElement === canvas) {
+    player.yaw -= e.movementX * 0.0022;
+    player.pitch = clamp(player.pitch - e.movementY * 0.0022, -1.35, 1.35);
+    return;
+  }
+  if (e.pointerType === 'mouse') { mouse.x = e.clientX; mouse.y = e.clientY; mouse.has = true; }
+  if (ptr.id !== e.pointerId) return;
+  const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
+  ptr.x = e.clientX; ptr.y = e.clientY; ptr.moved += Math.abs(dx) + Math.abs(dy);
+  if (ptr.moved > 6) {
+    const k = ptr.type === 'touch' ? 0.005 : 0.0035;
+    player.yaw -= dx * k; player.pitch = clamp(player.pitch - dy * k, -1.35, 1.35);
+    guide.autoWalk = guide.autoWalk && ptr.type !== 'touch';
+  }
+});
+canvas.addEventListener('pointerup', e => {
+  if (ptr.id !== e.pointerId) return;
+  ptr.id = null;
+  if (ptr.moved > 6) return;
+  if (ptr.button === 2) { if (deskHeld) releaseItem(deskHeld); return; }
+  const handled = deskClick({ x: e.clientX, y: e.clientY });
+  if (!handled && ptr.type === 'mouse') canvas.requestPointerLock?.();
+});
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+addEventListener('keydown', e => {
+  if (overlayOpen() || xrActive) return;
+  keys[e.code] = true;
+  if (e.code.startsWith('Arrow') || e.code === 'Space' || e.code === 'Tab') e.preventDefault();
+  if (e.repeat) return;
+  sfx.init();
+  switch (e.code) {
+    case 'Space': jumpReq = true; break;
+    case 'KeyE': deskGrabToggle(); break;
+    case 'KeyQ': toggleAssistant(); break;
+    case 'KeyM': case 'Tab': toggleMenu(); break;
+    case 'KeyT': hopRoute(); break;
+    case 'KeyG': if (guide.active) { guide.autoWalk = !guide.autoWalk; guide.delay = 0; } break;
+  }
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+{
+  const el = $('joy'), knob = el.firstElementChild;
+  const move = e => {
+    const r = el.getBoundingClientRect();
+    let x = (e.clientX - r.left - r.width / 2) / (r.width / 2), y = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+    const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; }
+    joy.x = x; joy.y = y; knob.style.transform = `translate(${x * 35}px,${y * 35}px)`;
+  };
+  el.addEventListener('pointerdown', e => { joy.id = e.pointerId; el.setPointerCapture(e.pointerId); move(e); sfx.init(); });
+  el.addEventListener('pointermove', e => { if (e.pointerId === joy.id) move(e); });
+  const end = e => { if (e.pointerId !== joy.id) return; joy.id = null; joy.x = joy.y = 0; knob.style.transform = ''; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+$('hudMenu').addEventListener('click', () => { sfx.init(); toggleMenu(); });
+$('hudAssistant').addEventListener('click', () => { sfx.init(); toggleAssistant(); });
+$('hudVR').addEventListener('click', enterVR);
+document.querySelectorAll('#langs button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+$('btnDesk').addEventListener('click', () => { sfx.init(); startExperience(); });
+$('btnVR').addEventListener('click', enterVR);
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+function startExperience() {
+  $('overlay').classList.add('hidden');
+  $('hud').classList.toggle('hidden', xrActive);
+  if (!started) { started = true; showToast(t('welcome')); refreshTexts(); }
+}
+async function enterVR() {
+  sfx.init();
+  if (!navigator.xr) return;
+  const opts = { requiredFeatures: ['local-floor'], optionalFeatures: ['bounded-floor', 'hand-tracking'] };
+  try {
+    let session;
+    try { session = await navigator.xr.requestSession('immersive-vr', opts); }
+    catch { session = await navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'] }); }
+    await renderer.xr.setSession(session);
+  } catch (e) { $('xrStatus').textContent = t('vrFail', e.message || e); }
+}
+renderer.xr.addEventListener('sessionstart', () => {
+  xrActive = true;
+  document.exitPointerLock?.();
+  rig.rotation.y = player.yaw;
+  camera.position.set(0, 0, 0); camera.quaternion.identity();
+  rig.position.y = player.feetY + (settings.seated ? SEAT_OFFSET : 0);
+  sun.shadow.mapSize.set(1024, 1024); sun.shadow.map?.dispose(); sun.shadow.map = null;
+  recenterPanels(); closeMenu();
+  startExperience();
+  showToast(t('welcome'));
+});
+renderer.xr.addEventListener('sessionend', () => {
+  xrActive = false;
+  hands.forEach(h => { if (h.held) releaseItem(h.held); h.teleporting = false; h.cursor.visible = false; });
+  hideArc();
+  player.yaw = head.yaw; player.pitch = 0;
+  rig.rotation.y = player.yaw; rig.position.set(head.pos.x, player.feetY, head.pos.z);
+  camera.position.set(0, EYE, 0); camera.quaternion.identity(); camera.rotation.set(0, 0, 0);
+  sun.shadow.mapSize.set(2048, 2048); sun.shadow.map?.dispose(); sun.shadow.map = null;
+  recenterPanels();
+  $('btnDesk').textContent = t('resume');
+  $('overlay').classList.remove('hidden');
+  $('hud').classList.add('hidden');
+});
+async function checkXR() {
+  if (!window.isSecureContext) xrStatusKey = 'vrNoHttps';
+  else if (!navigator.xr) xrStatusKey = 'vrNoXR';
+  else {
+    try {
+      const ok = await navigator.xr.isSessionSupported('immersive-vr');
+      xrStatusKey = ok ? 'vrOk' : 'vrNoImmersive';
+      $('btnVR').disabled = !ok; $('hudVR').hidden = !ok;
+    } catch { xrStatusKey = 'vrNoImmersive'; }
+  }
+  $('xrStatus').textContent = t(xrStatusKey);
+}
+
+// ============================================================================
+// Main loop
+// ============================================================================
+const clock = new THREE.Clock();
+const _fwd = new THREE.Vector3();
+function updateHead() {
+  rig.updateMatrixWorld(true);
+  if (xrActive) renderer.xr.updateCamera(camera);
+  camera.getWorldPosition(head.pos);
+  camera.getWorldDirection(_fwd);
+  head.yaw = xrActive ? Math.atan2(-_fwd.x, -_fwd.z) : player.yaw;
+}
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05), now = clock.elapsedTime;
+  updateHead();
+  if (started) { if (xrActive) updateXRInput(dt); else updateDesktop(dt); }
+  updateHead();
+  updateHeld(dt);
+  world.step(1 / 120, dt, 6);
+  updateItems(now);
+  for (const r of robots) r.update(dt, now);
+  updateGuide(dt, now);
+  ribbon.update(dt);
+  beacon.update(now);
+  updateFade(dt);
+  updatePointers();
+  greetings();
+  updatePanels(dt);
+  animateWorld(now, dt);
+  updateSun();
+  sfx.update(dt, head.pos, _fwd);
+  hudTick(dt);
+  renderer.render(scene, camera);
+});
+
+placePlayerAtSpawn();
+refreshTexts();
+checkXR();
+window.__nclubBooted = true;
+window.__nclub = { renderer, scene, camera, rig, player, robots, items, guide, startGuide, jumpToDestination, ZONES, findPath, colliders, settings, assistant, menuPanel, toast, ui, cart, hands, golf, deskClick, grabItem, releaseItem, setLang, isXR: () => xrActive };
+</script>
+</body>
+</html>
